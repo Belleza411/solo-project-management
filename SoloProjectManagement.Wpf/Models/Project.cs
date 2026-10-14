@@ -8,6 +8,6 @@
 		public ProjectStatus Status { get; set; } = ProjectStatus.NotStarted;
 		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 		public DateTime? UpdatedAt { get; set; }
-		public List<ProjectTask> Tasks { get; set; } = new();
+		public List<ProjectTask> Tasks { get; set; } = [];
 	}
 }
