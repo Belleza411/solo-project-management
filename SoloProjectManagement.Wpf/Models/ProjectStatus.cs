@@ -3,7 +3,7 @@
 	public enum ProjectStatus
 	{
 		NotStarted,
-		InProgress,
+		Active,
 		Completed,
 		Archived
 	}
