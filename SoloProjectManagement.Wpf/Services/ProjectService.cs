@@ -7,9 +7,21 @@ namespace SoloProjectManagement.UI.Services
 {
 	public class ProjectService(string connectionString) : IProjectService
 	{
-		public Task<Project> CreateAsync(CancellationToken ct)
+		public async Task<Project> CreateAsync(string title, string? description, ProjectStatus status, CancellationToken ct)
 		{
-			throw new NotImplementedException();
+			using var db = new ProjectDbContext(connectionString);
+
+			var project = new Project
+			{
+				Title = title,
+				Description = description,
+				Status = status
+			};
+
+			db.Projects.Add(project);
+			await db.SaveChangesAsync(ct);
+
+			return project;
 		}
 
 		public async Task<bool> DeleteAsync(Guid Id, CancellationToken ct)
@@ -51,9 +63,21 @@ namespace SoloProjectManagement.UI.Services
 				.FirstOrDefaultAsync(p => p.Id == id, ct);
 		}
 
-		public Task<bool> UpdateAsync(CancellationToken ct)
+		public async Task<bool> UpdateAsync(Guid id, string title, string? description, ProjectStatus status, CancellationToken ct)
 		{
-			throw new NotImplementedException();
+			using var db = new ProjectDbContext(connectionString);
+
+			var project = await GetByIdAsync(id, ct);
+
+			if (project is null) return false;
+
+			project.Title = title;
+			project.Description = description;
+			project.Status = status;
+			project.UpdatedAt = DateTime.UtcNow;
+
+			await db.SaveChangesAsync(ct);
+			return true;
 		}
 	}
 }
