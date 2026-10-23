@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using SoloProjectManagement.UI.Persistence;
+using SoloProjectManagement.UI.Services;
+using System.Windows;
 
 namespace SoloProjectManagement.UI
 {
@@ -7,6 +9,13 @@ namespace SoloProjectManagement.UI
 	/// </summary>
 	public partial class App : Application
 	{
+		protected override void OnStartup(StartupEventArgs e)
+		{
+			base.OnStartup(e);
+
+			var projectService = new ProjectService(DatabaseSettings.ConnectionString);
+			var taskService = new TaskService(DatabaseSettings.ConnectionString);
+		}
 	}
 
 }
