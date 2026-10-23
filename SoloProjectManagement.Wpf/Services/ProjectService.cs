@@ -1,5 +1,7 @@
-﻿using SoloProjectManagement.UI.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Models;
+using SoloProjectManagement.UI.Persistence;
 
 namespace SoloProjectManagement.UI.Services
 {
@@ -10,19 +12,43 @@ namespace SoloProjectManagement.UI.Services
 			throw new NotImplementedException();
 		}
 
-		public Task<bool> DeleteAsyncGuid(Guid Id, CancellationToken ct)
+		public async Task<bool> DeleteAsync(Guid Id, CancellationToken ct)
 		{
-			throw new NotImplementedException();
+			using var db = new ProjectDbContext(connectionString);
+
+			var project = await GetByIdAsync(Id, ct);
+
+			if (project is null) return false;
+
+			db.Projects.Remove(project);
+			await db.SaveChangesAsync(ct);
+
+			return true;
 		}
 
-		public Task<PagedResult<Project>> GetAllAsync(CancellationToken ct)
+		public async Task<PagedResult<Project>> GetAllAsync(int? pageNumber, int? pageSize, CancellationToken ct)
 		{
-			throw new NotImplementedException();
+			using var db = new ProjectDbContext(connectionString);
+
+			var projects = await db.Projects
+				.AsNoTracking()
+				.ToListAsync(ct);
+
+			var totalCount = projects.Count;
+
+			return new PagedResult<Project>(
+				Items: projects,
+				PageNumber: pageNumber ?? 1,
+				PageSize: pageSize ?? 3,
+				TotalCount: totalCount);
 		}
 
-		public Task<Project?> GetByIdAsync(Guid id, CancellationToken ct)
+		public async Task<Project?> GetByIdAsync(Guid id, CancellationToken ct)
 		{
-			throw new NotImplementedException();
+			using var db = new ProjectDbContext(connectionString);
+
+			return await db.Projects
+				.FirstOrDefaultAsync(p => p.Id == id, ct);
 		}
 
 		public Task<bool> UpdateAsync(CancellationToken ct)
