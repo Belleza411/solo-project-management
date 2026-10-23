@@ -11,11 +11,13 @@ namespace SoloProjectManagement.UI.Services
 			string title,
 			string? description,
 			ProjectStatus status,
+			DateTime dueDate,
 			CancellationToken ct);
 		Task<bool> UpdateAsync(
 			Guid id, 
 			string title,
 			string? description,
+			DateTime dueDate,
 			ProjectStatus status,
 			CancellationToken ct);
 		Task<bool> DeleteAsync(Guid Id, CancellationToken ct);

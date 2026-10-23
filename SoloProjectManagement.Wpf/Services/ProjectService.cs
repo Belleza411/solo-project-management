@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
@@ -7,7 +8,12 @@ namespace SoloProjectManagement.UI.Services
 {
 	public class ProjectService(string connectionString) : IProjectService
 	{
-		public async Task<Project> CreateAsync(string title, string? description, ProjectStatus status, CancellationToken ct)
+		public async Task<Project> CreateAsync(
+			string title,
+			string? description,
+			ProjectStatus status,
+			DateTime dueDate,
+			CancellationToken ct)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -15,7 +21,8 @@ namespace SoloProjectManagement.UI.Services
 			{
 				Title = title,
 				Description = description,
-				Status = status
+				Status = status,
+				DueDate = dueDate
 			};
 
 			db.Projects.Add(project);
@@ -65,7 +72,13 @@ namespace SoloProjectManagement.UI.Services
 				.FirstOrDefaultAsync(p => p.Id == id, ct);
 		}
 		 
-		public async Task<bool> UpdateAsync(Guid id, string title, string? description, ProjectStatus status, CancellationToken ct)
+		public async Task<bool> UpdateAsync(
+			Guid id,
+			string title,
+			string? description,
+			DateTime dueDate,
+			ProjectStatus status,
+			CancellationToken ct)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -76,6 +89,7 @@ namespace SoloProjectManagement.UI.Services
 			project.Title = title;
 			project.Description = description;
 			project.Status = status;
+			project.DueDate = dueDate;
 			project.UpdatedAt = DateTime.UtcNow;
 
 			await db.SaveChangesAsync(ct);
