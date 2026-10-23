@@ -1,13 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SoloProjectManagement.Wpf.Models;
+using SoloProjectManagement.Desktop.Models;
 
-namespace SoloProjectManagement.Wpf.Persistence
+namespace SoloProjectManagement.Desktop.Persistence
 {
-	public class ProjectDbContext : DbContext
+	public class ProjectDbContext(string connectionString) : DbContext
 	{
 		public DbSet<Project> Projects { get; set; }
 		public DbSet<ProjectTask> ProjectTasks { get; set;}
 
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		{
+			base.OnConfiguring(optionsBuilder);
+			optionsBuilder.UseSqlite(connectionString);
+		}
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
@@ -25,7 +30,7 @@ namespace SoloProjectManagement.Wpf.Persistence
 
 			modelBuilder.Entity<ProjectTask>(entity =>
 			{
-				entity.HasKey(p => t.Id);
+				entity.HasKey(p => p.Id);
 
 				entity
 					.HasOne(t => t.Project)
