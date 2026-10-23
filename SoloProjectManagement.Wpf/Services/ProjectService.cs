@@ -62,7 +62,7 @@ namespace SoloProjectManagement.UI.Services
 			return await db.Projects
 				.FirstOrDefaultAsync(p => p.Id == id, ct);
 		}
-
+		 
 		public async Task<bool> UpdateAsync(Guid id, string title, string? description, ProjectStatus status, CancellationToken ct)
 		{
 			using var db = new ProjectDbContext(connectionString);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Common;
+using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
 
@@ -7,9 +8,24 @@ namespace SoloProjectManagement.UI.Services
 {
 	public class TaskService(string connectionString) : ITaskService
 	{
-		public Task<ProjectTask> CreateAsync(CancellationToken ct)
+		public async Task<ProjectTask> CreateAsync(CreateTaskRequest request, CancellationToken ct)
 		{
-			throw new NotImplementedException();
+			using var db = new ProjectDbContext(connectionString);
+
+			var task = new ProjectTask
+			{
+				ProjectId = request.ProjectId,
+				Name = request.Name,
+				Description = request.Description,
+				Status = request.Status,
+				Priority = request.Priority,
+				DueDate = request.DueDate
+			};
+
+			db.ProjectTasks.Add(task);
+			await db.SaveChangesAsync(ct);
+
+			return task;
 		}
 
 		public async Task<bool> DeleteAsync(Guid id, CancellationToken ct)
@@ -39,7 +55,7 @@ namespace SoloProjectManagement.UI.Services
 			return new PagedResult<ProjectTask>(
 				Items: tasks,
 				PageNumber: pageNumber ?? 1,
-				PageSize: pageSize ?? 3,
+				PageSize: pageSize ?? 20,
 				TotalCount: totalCount);
 		}
 
@@ -51,9 +67,24 @@ namespace SoloProjectManagement.UI.Services
 				.FirstOrDefaultAsync(t => t.Id == id, ct);
 		}
 
-		public Task<bool> UpdateAsync(CancellationToken ct)
+		public async Task<bool> UpdateAsync(Guid id, UpdateTaskRequest request, CancellationToken ct)
 		{
-			throw new NotImplementedException();
+			using var db = new ProjectDbContext(connectionString);
+
+			var task = await GetByIdAsync(id, ct);
+
+			if (task is null) return false;
+
+			task.ProjectId = request.ProjectId;
+			task.Name = request.Name;
+			task.Description = request.Description;
+			task.Status = request.Status;
+			task.Priority = request.Priority;
+			task.DueDate = request.DueDate;
+			task.UpdatedAt = DateTime.UtcNow;
+
+			await db.SaveChangesAsync(ct);
+			return true;
 		}
 	}
 }
