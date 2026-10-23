@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 
-namespace SoloProjectManagement.Desktop.Persistence
+namespace SoloProjectManagement.UI.Persistence
 {
 	public class ProjectDbContextFactory : IDesignTimeDbContextFactory<ProjectDbContext>
 	{

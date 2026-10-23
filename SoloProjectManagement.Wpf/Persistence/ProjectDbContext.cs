@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SoloProjectManagement.Desktop.Models;
+using SoloProjectManagement.UI.Models;
 
-namespace SoloProjectManagement.Desktop.Persistence
+namespace SoloProjectManagement.UI.Persistence
 {
 	public class ProjectDbContext(string connectionString) : DbContext
 	{

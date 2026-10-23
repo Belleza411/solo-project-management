@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace SoloProjectManagement.Desktop.Persistence
+namespace SoloProjectManagement.UI.Persistence
 {
 	internal class DatabaseSettings
 	{

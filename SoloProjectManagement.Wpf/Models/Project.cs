@@ -1,4 +1,4 @@
-﻿namespace SoloProjectManagement.Wpf.Models
+﻿namespace SoloProjectManagement.UI.Models
 {
 	public sealed class Project
 	{
