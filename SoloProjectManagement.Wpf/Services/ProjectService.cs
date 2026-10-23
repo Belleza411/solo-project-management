@@ -43,6 +43,7 @@ namespace SoloProjectManagement.UI.Services
 			using var db = new ProjectDbContext(connectionString);
 
 			var projects = await db.Projects
+				.Include(p => p.Tasks)
 				.AsNoTracking()
 				.ToListAsync(ct);
 
@@ -60,6 +61,7 @@ namespace SoloProjectManagement.UI.Services
 			using var db = new ProjectDbContext(connectionString);
 
 			return await db.Projects
+				.Include(p => p.Tasks)
 				.FirstOrDefaultAsync(p => p.Id == id, ct);
 		}
 		 
