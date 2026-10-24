@@ -49,7 +49,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 			return new DashboardOverviewDto(
 				TotalProjects: new MetricCardDto("Total Projects", totalProjects, totalProjects),
 				TotalTasks: new MetricCardDto("Total Tasks", totalTasks, inProgressTasks),
-				CompletedTasksThisWeek: new MetricCardDto("Comple ted Task This Week", completedTasksThisWeek, completedTasksLastWeek),
+				CompletedTasksThisWeek: new MetricCardDto("Completed Task This Week", completedTasksThisWeek, completedTasksLastWeek),
 				OverdueTasks: new MetricCardDto("Overdue Tasks", overdueTasks, highPriorityOverdueTasks));
 		}
 

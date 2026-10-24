@@ -4,7 +4,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Dtos
 {
 	public record ProjectCardDto(
 		Guid Id,
-		string Name,
+		string Title,
 		string Description,
 		ProjectStatus Status,
 		DateTime? DueDate,

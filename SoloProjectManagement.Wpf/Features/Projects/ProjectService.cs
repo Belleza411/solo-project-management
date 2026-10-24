@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using SoloProjectManagement.UI.Common;
+using SoloProjectManagement.UI.Features.Projects.Dtos;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
+using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
-namespace SoloProjectManagement.UI.Services
+namespace SoloProjectManagement.UI.Features.Projects
 {
 	public class ProjectService(string connectionString) : IProjectService
 	{
@@ -45,18 +46,27 @@ namespace SoloProjectManagement.UI.Services
 			return true;
 		}
 
-		public async Task<PagedResult<Project>> GetAllAsync(int? pageNumber, int? pageSize, CancellationToken ct)
+		public async Task<PagedResult<ProjectDto>> GetAllAsync(int? pageNumber, int? pageSize, CancellationToken ct)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
 			var projects = await db.Projects
-				.Include(p => p.Tasks)
+				.Include(p => p.Tasks)  
 				.AsNoTracking()
+				.Select(p => new ProjectDto(
+					Id: p.Id,
+					Title: p.Title,
+					Description: p.Description ?? "",
+					Status: p.Status,
+					DueDate: p.DueDate,
+					CompletedTasks: p.Tasks.Count(t => t.Status == TaskStatus.Completed),
+					TotalTasks: p.Tasks.Count,
+					UpdatedAt: p.UpdatedAt))
 				.ToListAsync(ct);
-
+			 
 			var totalCount = projects.Count;
-
-			return new PagedResult<Project>(
+			 
+			return new PagedResult<ProjectDto>(
 				Items: projects,
 				PageNumber: pageNumber ?? 1,
 				PageSize: pageSize ?? 3,
