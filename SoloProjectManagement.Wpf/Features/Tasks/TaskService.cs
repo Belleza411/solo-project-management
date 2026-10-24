@@ -4,7 +4,7 @@ using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
 
-namespace SoloProjectManagement.UI.Services
+namespace SoloProjectManagement.UI.Features.Tasks
 {
 	public class TaskService(string connectionString) : ITaskService
 	{
