@@ -5,8 +5,9 @@ namespace SoloProjectManagement.UI.Persistence
 {
 	public class ProjectDbContext(string connectionString) : DbContext
 	{
-		public DbSet<Project> Projects { get; set; }
-		public DbSet<ProjectTask> ProjectTasks { get; set;}
+		public DbSet<Project> Projects => Set<Project>();
+		public DbSet<ProjectTask> ProjectTasks => Set<ProjectTask>();
+		public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
@@ -37,6 +38,14 @@ namespace SoloProjectManagement.UI.Persistence
 					.WithMany(t => t.Tasks)
 					.HasForeignKey(t => t.ProjectId)
 					.OnDelete(DeleteBehavior.Cascade);
+			});
+
+			modelBuilder.Entity<ActivityLog>(entity =>
+			{
+				entity.HasKey(l => l.Id);
+
+				entity.HasIndex(l => l.CreatedAt);
+				entity.HasIndex(l => l.ProjectId);
 			});
 		}
 	}

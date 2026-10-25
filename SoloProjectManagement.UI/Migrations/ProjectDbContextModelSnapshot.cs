@@ -17,6 +17,42 @@ namespace SoloProjectManagement.UI.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.13");
 
+            modelBuilder.Entity("SoloProjectManagement.UI.Models.ActivityLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ProjectTaskId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("ProjectTaskId");
+
+                    b.ToTable("ActivityLogs");
+                });
+
             modelBuilder.Entity("SoloProjectManagement.UI.Models.Project", b =>
                 {
                     b.Property<Guid>("Id")
@@ -85,6 +121,13 @@ namespace SoloProjectManagement.UI.Migrations
                     b.ToTable("ProjectTasks");
                 });
 
+            modelBuilder.Entity("SoloProjectManagement.UI.Models.ActivityLog", b =>
+                {
+                    b.HasOne("SoloProjectManagement.UI.Models.ProjectTask", null)
+                        .WithMany("ActivityLogs")
+                        .HasForeignKey("ProjectTaskId");
+                });
+
             modelBuilder.Entity("SoloProjectManagement.UI.Models.ProjectTask", b =>
                 {
                     b.HasOne("SoloProjectManagement.UI.Models.Project", "Project")
@@ -99,6 +142,11 @@ namespace SoloProjectManagement.UI.Migrations
             modelBuilder.Entity("SoloProjectManagement.UI.Models.Project", b =>
                 {
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("SoloProjectManagement.UI.Models.ProjectTask", b =>
+                {
+                    b.Navigation("ActivityLogs");
                 });
 #pragma warning restore 612, 618
         }
