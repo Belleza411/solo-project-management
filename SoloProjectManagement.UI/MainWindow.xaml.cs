@@ -7,6 +7,7 @@ namespace SoloProjectManagement.UI
 	/// </summary>
 	public partial class MainWindow : FluentWindow
 	{
+		public INavigationView Navigation => RootNavigation;
 		public MainWindow()
 		{
 			InitializeComponent();

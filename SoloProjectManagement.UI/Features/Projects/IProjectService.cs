@@ -6,7 +6,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 {
 	public interface IProjectService
 	{
-		Task<PagedResult<ProjectDto> GetAllAsync(int? pageNumber, int? pageSize, CancellationToken ct);
+		Task<PagedResult<ProjectDto>> GetAllAsync(int? pageNumber, int? pageSize, CancellationToken ct);
 		Task<Project?> GetByIdAsync(Guid id, CancellationToken ct);
 		Task<Project> CreateAsync(
 			string title,
