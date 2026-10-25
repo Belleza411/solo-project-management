@@ -8,7 +8,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 {
 	public class DashboardService(string connectionString) : IDashboardService
 	{
-		public async Task<DashboardOverviewDto> GetOverviewAsync(CancellationToken ct)
+		public async Task<DashboardOverviewDto> GetOverviewAsync(CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -47,13 +47,13 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				.CountAsync(ct);
 
 			return new DashboardOverviewDto(
-				TotalProjects: new MetricCardDto("Total Projects", totalProjects, totalProjects),
-				TotalTasks: new MetricCardDto("Total Tasks", totalTasks, inProgressTasks),
-				CompletedTasksThisWeek: new MetricCardDto("Completed Task This Week", completedTasksThisWeek, completedTasksLastWeek),
-				OverdueTasks: new MetricCardDto("Overdue Tasks", overdueTasks, highPriorityOverdueTasks));
+				TotalProjects: new MetricCardDto("Total Projects", totalProjects, $"{totalProjects} currently active"),
+				TotalTasks: new MetricCardDto("Total Tasks", totalTasks, $"{inProgressTasks} tasks currently in progress"),
+				CompletedTasksThisWeek: new MetricCardDto("Completed Task This Week", completedTasksThisWeek, $"{completedTasksLastWeek} vs last week"),
+				OverdueTasks: new MetricCardDto("Overdue Tasks", overdueTasks, $"{highPriorityOverdueTasks} needs your attention"));
 		}
 
-		public async Task<List<ProjectCardDto>> GetRecentProjectsAsync(CancellationToken ct)
+		public async Task<List<ProjectCardDto>> GetRecentProjectsAsync(CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -67,10 +67,11 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 					p.DueDate,
 					p.Tasks.Count(t => t.Status == TaskStatus.Completed),
 					p.Tasks.Count()))
+				.Take(3)
 				.ToListAsync(ct);
 		}
 
-		public async Task<List<RecentTaskDto>> GetRecentTasksAsync(CancellationToken ct)
+		public async Task<List<RecentTaskDto>> GetRecentTasksAsync(CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 

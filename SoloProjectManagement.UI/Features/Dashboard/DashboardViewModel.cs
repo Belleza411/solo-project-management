@@ -12,13 +12,63 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 	{
 		public ObservableCollection<ProjectCardDto> RecentProjects { get; } = [];
 		public ObservableCollection<RecentTaskDto> RecentTasks { get; } = [];
+
+		[ObservableProperty]
+		private DashboardOverviewDto _overview;
+
+		[ObservableProperty]
+		private int _totalTasksCount;
+		 
+		public static string DateText => DateTime.Today.ToString("dddd, MMMM d, yyyy").ToUpper();
+		public static string Greeting => DateTime.Now.Hour switch
+		{
+			< 12 => "Good morning",
+			< 18 => "Good afternoon",
+			_ => "Good evening"
+		};
+		public string TasksFooter => $"Showing {RecentTasks.Count} of {TotalTasksCount} tasks";
+
+		[ObservableProperty]
+		private bool _isBusy;
+
+		[ObservableProperty]
+		private string? _errorMessage;
+
 		public Task OnNavigatedToAsync() => LoadAsync();
 		public Task OnNavigatedFromAsync() => Task.CompletedTask;
 
-		private Task LoadAsync()
+		private async Task LoadAsync()
 		{
-			// TODO: Call service 
-			return Task.CompletedTask;
+			IsBusy = true;
+			ErrorMessage = null;
+			try
+			{
+				var overview = dashboardService.GetOverviewAsync();
+				var recentProjects = dashboardService.GetRecentProjectsAsync();
+				var recentTasks = dashboardService.GetRecentTasksAsync();
+				await Task.WhenAll(overview, recentProjects, recentTasks);
+
+				Overview = overview.Result;
+				Replace(RecentProjects, recentProjects.Result);
+				Replace(RecentTasks, recentTasks.Result);
+				TotalTasksCount = recentTasks.Result.Count;
+				OnPropertyChanged(nameof(TasksFooter));
+
+			}
+			catch (Exception ex)
+			{
+				ErrorMessage = ex.Message;
+			}
+			finally
+			{
+				IsBusy = false;
+			}
+		}
+
+		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)
+		{
+			source.Clear();
+			foreach (var item in items) source.Add(item);
 		}
 	};
 
