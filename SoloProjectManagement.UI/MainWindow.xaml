@@ -17,7 +17,11 @@
 
         <ui:TitleBar Title="{Binding ApplicationTitle}" />
 
-        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" PaneDisplayMode="Left">
+        <ui:NavigationView 
+                x:Name="RootNavigation" 
+                Grid.Row="1" 
+                PaneDisplayMode="Left"
+                IsBackButtonVisible="Collapsed">
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem Content="Dashboard"
                                        Icon="{ui:SymbolIcon Home24}"
