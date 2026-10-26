@@ -8,7 +8,7 @@ namespace SoloProjectManagement.UI.Features.Tasks
 {
 	public class TaskService(string connectionString) : ITaskService
 	{
-		public async Task<ProjectTask> CreateAsync(CreateTaskRequest request, CancellationToken ct)
+		public async Task<ProjectTask> CreateAsync(CreateTaskRequest request, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -28,7 +28,7 @@ namespace SoloProjectManagement.UI.Features.Tasks
 			return task;
 		}
 
-		public async Task<bool> DeleteAsync(Guid id, CancellationToken ct)
+		public async Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -42,24 +42,26 @@ namespace SoloProjectManagement.UI.Features.Tasks
 			return true;
 		}
 
-		public async Task<PagedResult<ProjectTask>> GetAllAsync(int? pageNumber, int? pageSize, CancellationToken ct)
+		public async Task<PagedResult<ProjectTask>> GetAllAsync(int pageNumber = 1, int pageSize = 10, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
 			var tasks = await db.ProjectTasks
 				.AsNoTracking()
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
 				.ToListAsync(ct);
 
 			var totalCount = tasks.Count;
 
 			return new PagedResult<ProjectTask>(
 				Items: tasks,
-				PageNumber: pageNumber ?? 1,
-				PageSize: pageSize ?? 20,
+				PageNumber: pageNumber,
+				PageSize: pageSize,
 				TotalCount: totalCount);
 		}
 
-		public async Task<ProjectTask?> GetByIdAsync(Guid id, CancellationToken ct)
+		public async Task<ProjectTask?> GetByIdAsync(Guid id, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -67,7 +69,7 @@ namespace SoloProjectManagement.UI.Features.Tasks
 				.FirstOrDefaultAsync(t => t.Id == id, ct);
 		}
 
-		public async Task<bool> UpdateAsync(Guid id, UpdateTaskRequest request, CancellationToken ct)
+		public async Task<bool> UpdateAsync(Guid id, UpdateTaskRequest request, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 

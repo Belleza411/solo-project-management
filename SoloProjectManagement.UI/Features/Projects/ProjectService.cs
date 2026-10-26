@@ -14,7 +14,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			string? description,
 			ProjectStatus status,
 			DateTime dueDate,
-			CancellationToken ct)
+			CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -32,7 +32,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			return project;
 		}
 
-		public async Task<bool> DeleteAsync(Guid Id, CancellationToken ct)
+		public async Task<bool> DeleteAsync(Guid Id, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -46,13 +46,15 @@ namespace SoloProjectManagement.UI.Features.Projects
 			return true;
 		}
 
-		public async Task<PagedResult<ProjectDto>> GetAllAsync(int? pageNumber, int? pageSize, CancellationToken ct)
+		public async Task<PagedResult<ProjectDto>> GetAllAsync(int pageNumber = 1, int pageSize = 6, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
 			var projects = await db.Projects
 				.Include(p => p.Tasks)  
 				.AsNoTracking()
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
 				.Select(p => new ProjectDto(
 					Id: p.Id,
 					Title: p.Title,
@@ -68,12 +70,12 @@ namespace SoloProjectManagement.UI.Features.Projects
 			 
 			return new PagedResult<ProjectDto>(
 				Items: projects,
-				PageNumber: pageNumber ?? 1,
-				PageSize: pageSize ?? 3,
+				PageNumber: pageNumber,
+				PageSize: pageSize,
 				TotalCount: totalCount);
 		}
 
-		public async Task<Project?> GetByIdAsync(Guid id, CancellationToken ct)
+		public async Task<Project?> GetByIdAsync(Guid id, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -88,7 +90,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			string? description,
 			DateTime dueDate,
 			ProjectStatus status,
-			CancellationToken ct)
+			CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
