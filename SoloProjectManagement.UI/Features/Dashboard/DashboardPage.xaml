@@ -30,36 +30,64 @@
             <UniformGrid Columns="4" Margin="0,30,0,30">
                 <ui:Card Margin="0,0,10,0">
                     <StackPanel>
-                        <StackPanel HorizontalAlignment="Left">
-                            <ui:TextBlock Text="{Binding Overview.TotalProjects.Title}" FontSize="14"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ui:TextBlock Text="{Binding Overview.TotalProjects.Title}" FontSize="14" Grid.Column="0"/>
+
+                            <ui:SymbolIcon Grid.Column="1" Symbol="Folder20" FontSize="20"/>
+                        </Grid>
                         <ui:TextBlock Text="{Binding Overview.TotalProjects.Value}" FontSize="32" Margin="0,10" />
                         <ui:TextBlock Text="{Binding Overview.TotalProjects.SubValue}" FontSize="12"/>
                     </StackPanel>
                 </ui:Card>
                 <ui:Card Margin="0,0,10,0">
                     <StackPanel>
-                        <StackPanel HorizontalAlignment="Left">
-                            <ui:TextBlock Text="{Binding Overview.TotalTasks.Title}" FontSize="14"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ui:TextBlock Text="{Binding Overview.TotalTasks.Title}" FontSize="14" Grid.Column="0"/>
+
+                            <ui:SymbolIcon Grid.Column="1" Symbol="TasksApp20" FontSize="20"/>
+                        </Grid>
                         <ui:TextBlock Text="{Binding Overview.TotalTasks.Value}" FontSize="32" Margin="0,10" />
                         <ui:TextBlock Text="{Binding Overview.TotalTasks.SubValue}" FontSize="12"/>
                     </StackPanel>
                 </ui:Card>
                 <ui:Card Margin="0,0,10,0">
                     <StackPanel>
-                        <StackPanel HorizontalAlignment="Left">
-                            <ui:TextBlock Text="{Binding Overview.CompletedTasksThisWeek.Title}" FontSize="14"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ui:TextBlock Text="{Binding Overview.CompletedTasksThisWeek.Title}" FontSize="14" Grid.Column="0"/>
+
+                            <ui:SymbolIcon Grid.Column="1" Symbol="TasksApp20" FontSize="20"/>
+                        </Grid>
                         <ui:TextBlock Text="{Binding Overview.CompletedTasksThisWeek.Value}" FontSize="32" Margin="0,10" />
                         <ui:TextBlock Text="{Binding Overview.CompletedTasksThisWeek.SubValue}" FontSize="12"/>
                     </StackPanel>
                 </ui:Card>
                 <ui:Card>
                     <StackPanel>
-                        <StackPanel HorizontalAlignment="Left">
-                            <ui:TextBlock Text="{Binding Overview.OverdueTasks.Title}" FontSize="14"/>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ui:TextBlock Text="{Binding Overview.OverdueTasks.Title}" FontSize="14" Grid.Column="0"/>
+
+                            <ui:SymbolIcon Grid.Column="1" Symbol="TasksApp20" FontSize="20"/>
+                        </Grid>
                         <ui:TextBlock Text="{Binding Overview.OverdueTasks.Value}" FontSize="32" Margin="0,10" />
                         <ui:TextBlock Text="{Binding Overview.OverdueTasks.SubValue}" FontSize="12"/>
                     </StackPanel>
@@ -74,7 +102,7 @@
 
                     <ui:TextBlock 
                         Grid.Column="0"
-                        Text="Recent Tasks"
+                        Text="Recent Projects"
                         FontSize="16"
                         FontWeight="SemiBold"/>
 
