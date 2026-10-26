@@ -9,10 +9,6 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Dtos
 		string Description,
 		ProjectStatus Status,
 		DateTime? DueDate,
-		int CompletedTasks,
-		int TotalTasks)
-	{
-		public int ProgressPercent =>
-			TotalTasks == 0 ? 0 : (int)Math.Round(CompletedTasks * 100.0 / TotalTasks);
-	}
+		string TasksFraction,
+		int ProgressPercent);
 }

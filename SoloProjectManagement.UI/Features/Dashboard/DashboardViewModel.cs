@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SoloProjectManagement.UI.Features.Dashboard.Dtos;
+using SoloProjectManagement.UI.Features.Projects;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions.Controls;
@@ -18,6 +20,8 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 
 		[ObservableProperty]
 		private int _totalTasksCount;
+		[ObservableProperty]
+		private int _completedTasksCount;
 		 
 		public static string DateText => DateTime.Today.ToString("dddd, MMMM d, yyyy").ToUpper();
 		public static string Greeting => DateTime.Now.Hour switch
@@ -51,7 +55,9 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				Overview = overview.Result;
 				Replace(RecentProjects, recentProjects.Result);
 				Replace(RecentTasks, recentTasks.Result);
+
 				TotalTasksCount = recentTasks.Result.Count;
+
 				OnPropertyChanged(nameof(TasksFooter));
 
 			}
@@ -64,6 +70,9 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				IsBusy = false;
 			}
 		}
+
+		[RelayCommand]
+		private void ViewAllProjects() => navigation.Navigate(typeof(ProjectsPage));
 
 		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)
 		{

@@ -49,21 +49,42 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 		{
 			using var db = new ProjectDbContext(connectionString);
 
-			return await db.Projects
-				.AsNoTracking()
+			var projects = await db.Projects
 				.Where(p => p.Status != ProjectStatus.Archived)
 				.OrderByDescending(p => p.UpdatedAt)
-				.Select(p => new ProjectCardDto(
+				.Take(3)
+				.Select(p => new
+				{
+					p.Id,
+					p.Category,
+					p.Title,
+					p.Description,
+					p.Status,
+					p.DueDate,
+					TotalTasks = p.Tasks.Count(),
+					CompletedTasks = p.Tasks.Count(t => t.Status == TaskStatus.Completed)
+				})
+				.ToListAsync(ct);
+
+			return projects.Select(p =>
+			{
+				int progressPercent = p.TotalTasks == 0
+					? 0
+					: (int)Math.Round(p.CompletedTasks * 100.0 / p.TotalTasks);
+
+				string tasksFraction = $"{p.CompletedTasks} / {p.TotalTasks} tasks";
+
+				return new ProjectCardDto(
 					p.Id,
 					p.Category,
 					p.Title,
 					p.Description ?? "",
 					p.Status,
 					p.DueDate,
-					p.Tasks.Count(t => t.Status == TaskStatus.Completed),
-					p.Tasks.Count()))
-				.Take(3)
-				.ToListAsync(ct);
+					tasksFraction,
+					progressPercent
+				);
+			}).ToList();
 		}
 
 		public async Task<List<RecentTaskDto>> GetRecentTasksAsync(CancellationToken ct = default)
