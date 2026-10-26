@@ -84,6 +84,40 @@ namespace SoloProjectManagement.UI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"),
+                            Category = 0,
+                            CreatedAt = new DateTime(2026, 9, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Develop the core checkout flow and shopping cart service.",
+                            DueDate = new DateTime(2026, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = 1,
+                            Title = "E-Commerce Platform",
+                            UpdatedAt = new DateTime(2026, 9, 29, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            Category = 1,
+                            CreatedAt = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Build iOS and Android MVP for tracking user daily steps.",
+                            DueDate = new DateTime(2027, 2, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = 0,
+                            Title = "Mobile Fitness Tracker"
+                        },
+                        new
+                        {
+                            Id = new Guid("c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            Category = 5,
+                            CreatedAt = new DateTime(2026, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Migrate legacy build pipelines to GitHub Actions for faster builds.",
+                            DueDate = new DateTime(2026, 10, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = 2,
+                            Title = "CI/CD Pipeline Optimization",
+                            UpdatedAt = new DateTime(2026, 9, 30, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("SoloProjectManagement.UI.Models.ProjectTask", b =>
