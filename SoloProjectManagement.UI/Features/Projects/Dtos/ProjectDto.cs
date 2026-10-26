@@ -4,6 +4,7 @@ namespace SoloProjectManagement.UI.Features.Projects.Dtos
 {
 	public sealed record ProjectDto(
 		Guid Id,
+		ProjectCategory Category,
 		string Title,
 		string Description,
 		ProjectStatus Status,

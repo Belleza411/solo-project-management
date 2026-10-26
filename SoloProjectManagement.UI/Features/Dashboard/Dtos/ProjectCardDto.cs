@@ -4,6 +4,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Dtos
 {
 	public record ProjectCardDto(
 		Guid Id,
+		ProjectCategory Category,
 		string Title,
 		string Description,
 		ProjectStatus Status,

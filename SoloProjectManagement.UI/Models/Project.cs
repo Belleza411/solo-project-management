@@ -3,6 +3,7 @@
 	public sealed class Project
 	{
 		public Guid Id { get; set; }
+		public ProjectCategory Category { get; set; } = ProjectCategory.Other;
 		public string Title { get; set; } = string.Empty;
 		public string? Description { get; set; }
 		public ProjectStatus Status { get; set; } = ProjectStatus.NotStarted;

@@ -55,6 +55,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				.OrderByDescending(p => p.UpdatedAt)
 				.Select(p => new ProjectCardDto(
 					p.Id,
+					p.Category,
 					p.Title,
 					p.Description ?? "",
 					p.Status,

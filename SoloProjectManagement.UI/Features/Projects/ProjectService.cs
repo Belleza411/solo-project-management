@@ -57,6 +57,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 				.Take(pageSize)
 				.Select(p => new ProjectDto(
 					Id: p.Id,
+					Category: p.Category,
 					Title: p.Title,
 					Description: p.Description ?? "",
 					Status: p.Status,
