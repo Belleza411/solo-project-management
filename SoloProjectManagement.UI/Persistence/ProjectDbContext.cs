@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Models;
+using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
 namespace SoloProjectManagement.UI.Persistence
 {
@@ -82,6 +83,119 @@ namespace SoloProjectManagement.UI.Persistence
 					Status = ProjectStatus.Completed,
 					DueDate = now.AddDays(5),
 					CreatedAt = now.AddDays(-30),
+					UpdatedAt = now.AddDays(-1)
+				}
+			);
+
+			modelBuilder.Entity<ProjectTask>().HasData(
+				new ProjectTask
+				{
+					Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+					ProjectId = Guid.Parse("a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"),
+					Name = "Design Database Schema for Shopping Cart",
+					Description = "Create tables for cart items, sessions, and guest checkout persistent data.",
+					Status = TaskStatus.Completed,
+					Priority = TaskPriority.High,
+					DueDate = now.AddDays(14),
+					CreatedAt = now.AddDays(-10),
+					UpdatedAt = now.AddDays(-8)
+				},
+				new ProjectTask
+				{
+					Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+					ProjectId = Guid.Parse("a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"),
+					Name = "Integrate Stripe Payment Gateway",
+					Description = "Implement backend API endpoints to handle checkout sessions and webhooks.",
+					Status = TaskStatus.InProgress,
+					Priority = TaskPriority.High,
+					DueDate = now.AddMonths(1),
+					CreatedAt = now.AddDays(-7),
+					UpdatedAt = now.AddDays(-2)
+				},
+				new ProjectTask
+				{
+					Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+					ProjectId = Guid.Parse("a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"),
+					Name = "Write Unit Tests for Checkout Flow",
+					Description = "Achieve 85%+ test coverage on order placement and discount logic.",
+					Status = TaskStatus.Todo,
+					Priority = TaskPriority.Medium,
+					DueDate = now.AddMonths(2),
+					CreatedAt = now.AddDays(-5),
+					UpdatedAt = null
+				},
+
+				new ProjectTask
+				{
+					Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+					ProjectId = Guid.Parse("b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e"),
+					Name = "Set up Flutter Cross-Platform Project",
+					Description = "Initialize repository, configure linting, and verify iOS/Android emulators.",
+					Status = TaskStatus.Todo,
+					Priority = TaskPriority.High,
+					DueDate = now.AddDays(7),
+					CreatedAt = now,
+					UpdatedAt = null
+				},
+				new ProjectTask
+				{
+					Id = Guid.Parse("55555555-5555-5555-5555-555555555555"),
+					ProjectId = Guid.Parse("b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e"),
+					Name = "Implement Core Motion / Google Fit Integration",
+					Description = "Request permissions and fetch raw step count data from device sensors.",
+					Status = TaskStatus.Todo,
+					Priority = TaskPriority.High,
+					DueDate = now.AddMonths(2),
+					CreatedAt = now,
+					UpdatedAt = null
+				},
+				new ProjectTask
+				{
+					Id = Guid.Parse("66666666-6666-6666-6666-666666666666"),
+					ProjectId = Guid.Parse("b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e"),
+					Name = "Create UI Mockups for Daily Dashboard",
+					Description = "Design visual step rings, historical graphs, and settings pages.",
+					Status = TaskStatus.Todo,
+					Priority = TaskPriority.Medium,
+					DueDate = now.AddMonths(1),
+					CreatedAt = now,
+					UpdatedAt = null
+				},
+
+				new ProjectTask
+				{
+					Id = Guid.Parse("77777777-7777-7777-7777-777777777777"),
+					ProjectId = Guid.Parse("c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+					Name = "Audit Legacy Jenkins Pipeline",
+					Description = "Document all environment variables, build steps, and secret dependencies.",
+					Status = TaskStatus.Completed,
+					Priority = TaskPriority.Medium,
+					DueDate = now.AddDays(-15),
+					CreatedAt = now.AddDays(-30),
+					UpdatedAt = now.AddDays(-28)
+				},
+				new ProjectTask
+				{
+					Id = Guid.Parse("88888888-8888-8888-8888-888888888888"),
+					ProjectId = Guid.Parse("c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+					Name = "Configure GitHub Actions Workflows",
+					Description = "Write YAML configurations for build-on-push and pull request validation.",
+					Status = TaskStatus.Completed,
+					Priority = TaskPriority.High,
+					DueDate = now.AddDays(-5),
+					CreatedAt = now.AddDays(-25),
+					UpdatedAt = now.AddDays(-15)
+				},
+				new ProjectTask
+				{
+					Id = Guid.Parse("99999999-9999-9999-9999-999999999999"),
+					ProjectId = Guid.Parse("c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+					Name = "Implement Dependency Caching",
+					Description = "Configure actions/cache to reduce average NPM and NuGet build times by 40%.",
+					Status = TaskStatus.Completed,
+					Priority = TaskPriority.Low,
+					DueDate = now.AddDays(5),
+					CreatedAt = now.AddDays(-10),
 					UpdatedAt = now.AddDays(-1)
 				}
 			);

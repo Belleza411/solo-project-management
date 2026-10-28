@@ -156,6 +156,112 @@ namespace SoloProjectManagement.UI.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectTasks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            CreatedAt = new DateTime(2026, 9, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Create tables for cart items, sessions, and guest checkout persistent data.",
+                            DueDate = new DateTime(2026, 10, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Design Database Schema for Shopping Cart",
+                            Priority = 2,
+                            ProjectId = new Guid("a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"),
+                            Status = 2,
+                            UpdatedAt = new DateTime(2026, 9, 23, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            CreatedAt = new DateTime(2026, 9, 24, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Implement backend API endpoints to handle checkout sessions and webhooks.",
+                            DueDate = new DateTime(2026, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Integrate Stripe Payment Gateway",
+                            Priority = 2,
+                            ProjectId = new Guid("a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"),
+                            Status = 1,
+                            UpdatedAt = new DateTime(2026, 9, 29, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            CreatedAt = new DateTime(2026, 9, 26, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Achieve 85%+ test coverage on order placement and discount logic.",
+                            DueDate = new DateTime(2026, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Write Unit Tests for Checkout Flow",
+                            Priority = 1,
+                            ProjectId = new Guid("a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"),
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            CreatedAt = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Initialize repository, configure linting, and verify iOS/Android emulators.",
+                            DueDate = new DateTime(2026, 10, 8, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Set up Flutter Cross-Platform Project",
+                            Priority = 2,
+                            ProjectId = new Guid("b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
+                            CreatedAt = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Request permissions and fetch raw step count data from device sensors.",
+                            DueDate = new DateTime(2026, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Implement Core Motion / Google Fit Integration",
+                            Priority = 2,
+                            ProjectId = new Guid("b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666666"),
+                            CreatedAt = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Design visual step rings, historical graphs, and settings pages.",
+                            DueDate = new DateTime(2026, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Create UI Mockups for Daily Dashboard",
+                            Priority = 1,
+                            ProjectId = new Guid("b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e"),
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-7777-7777-7777-777777777777"),
+                            CreatedAt = new DateTime(2026, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Document all environment variables, build steps, and secret dependencies.",
+                            DueDate = new DateTime(2026, 9, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Audit Legacy Jenkins Pipeline",
+                            Priority = 1,
+                            ProjectId = new Guid("c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            Status = 2,
+                            UpdatedAt = new DateTime(2026, 9, 3, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("88888888-8888-8888-8888-888888888888"),
+                            CreatedAt = new DateTime(2026, 9, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Write YAML configurations for build-on-push and pull request validation.",
+                            DueDate = new DateTime(2026, 9, 26, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Configure GitHub Actions Workflows",
+                            Priority = 2,
+                            ProjectId = new Guid("c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            Status = 2,
+                            UpdatedAt = new DateTime(2026, 9, 16, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999999"),
+                            CreatedAt = new DateTime(2026, 9, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Configure actions/cache to reduce average NPM and NuGet build times by 40%.",
+                            DueDate = new DateTime(2026, 10, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Implement Dependency Caching",
+                            Priority = 0,
+                            ProjectId = new Guid("c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f"),
+                            Status = 2,
+                            UpdatedAt = new DateTime(2026, 9, 30, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("SoloProjectManagement.UI.Models.ActivityLog", b =>
