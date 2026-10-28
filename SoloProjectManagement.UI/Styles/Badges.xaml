@@ -69,21 +69,21 @@
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Right"/>
         <Style.Triggers>
-            <DataTrigger Binding="{Binding Status}" Value="Not Started">
-                <Setter Property="Background" Value="#FEF3C7"/>
-                <Setter Property="Foreground" Value="#92400E"/>
+            <DataTrigger Binding="{Binding Status}" Value="NotStarted">
+                <Setter Property="Background" Value="#E2E3E5"/>
+                <Setter Property="Foreground" Value="#383D41"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Status}" Value="Archived">
-                <Setter Property="Background" Value="#FEE2E2"/>
-                <Setter Property="Foreground" Value="#991B1B"/>
+                <Setter Property="Background" Value="#CFD4DA"/>
+                <Setter Property="Foreground" Value="#495057 "/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Status}" Value="Active">
-                <Setter Property="Background" Value="#E5E7EB"/>
-                <Setter Property="Foreground" Value="#374151"/>
+                <Setter Property="Background" Value="#CCE5FF"/>
+                <Setter Property="Foreground" Value="#004085 "/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Status}" Value="Completed">
-                <Setter Property="Background" Value="#DBEAFE"/>
-                <Setter Property="Foreground" Value="#1E40AF"/>
+                <Setter Property="Background" Value="#D4EDDA"/>
+                <Setter Property="Foreground" Value="#155724"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
