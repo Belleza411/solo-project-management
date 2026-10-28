@@ -68,18 +68,16 @@
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Right"/>
-        <Setter Property="Background" Value="#DCFCE7"/>
-        <Setter Property="Foreground" Value="#166534"/>
         <Style.Triggers>
-            <DataTrigger Binding="{Binding Status}" Value="AtRisk">
+            <DataTrigger Binding="{Binding Status}" Value="Not Started">
                 <Setter Property="Background" Value="#FEF3C7"/>
                 <Setter Property="Foreground" Value="#92400E"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Status}" Value="Delayed">
+            <DataTrigger Binding="{Binding Status}" Value="Archived">
                 <Setter Property="Background" Value="#FEE2E2"/>
                 <Setter Property="Foreground" Value="#991B1B"/>
             </DataTrigger>
-            <DataTrigger Binding="{Binding Status}" Value="OnHold">
+            <DataTrigger Binding="{Binding Status}" Value="Active">
                 <Setter Property="Background" Value="#E5E7EB"/>
                 <Setter Property="Foreground" Value="#374151"/>
             </DataTrigger>
