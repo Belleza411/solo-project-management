@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Dashboard.Dtos;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
@@ -62,7 +63,8 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 					p.Status,
 					p.DueDate,
 					TotalTasks = p.Tasks.Count(),
-					CompletedTasks = p.Tasks.Count(t => t.Status == TaskStatus.Completed)
+					CompletedTasks = p.Tasks.Count(t => t.Status == TaskStatus.Completed),
+					Tasks = p.Tasks
 				})
 				.ToListAsync(ct);
 
@@ -73,12 +75,16 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 					: (int)Math.Round(p.CompletedTasks * 100.0 / p.TotalTasks);
 
 				string tasksFraction = $"{p.CompletedTasks} / {p.TotalTasks} tasks";
+				var currentTask = p.Tasks.FirstOrDefault(p => 
+					p.Status == TaskStatus.InProgress
+					&& p.Priority == TaskPriority.High);
 
 				return new ProjectCardDto(
 					p.Id,
 					p.Category,
 					p.Title,
 					p.Description ?? "",
+					currentTask?.Name ?? "No task",
 					p.Status,
 					p.DueDate,
 					tasksFraction,

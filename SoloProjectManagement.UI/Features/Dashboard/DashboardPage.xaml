@@ -136,6 +136,7 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
                                     <Grid Grid.Row="0" Margin="0,0,0,20">
@@ -146,7 +147,7 @@
 
                                         <ContentControl Grid.Column="0" Style="{StaticResource ProjectIconTile}"
                                             Content="{Binding}"/>
-           
+
                                         <ContentControl Grid.Column="1" Style="{StaticResource ProjectStatusBadge}"
                                             Content="{Binding Status, Converter={StaticResource SpacedEnumConverter}}"/>
                                     </Grid>
@@ -174,15 +175,16 @@
                                         <ui:TextBlock Grid.Row="0" Text="{Binding TasksFraction}" FontSize="13" Foreground="#666666" HorizontalAlignment="Left"/>
                                         <ui:TextBlock Grid.Row="0" Text="{Binding ProgressPercent, StringFormat={}{0}%}"  FontSize="13" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Right"/>
 
-                                        <ProgressBar Grid.Row="1" 
-                                             Value="{Binding ProgressPercent, Mode=OneWay}" 
-                                             Minimum="0" 
-                                             Maximum="100" 
-                                             Height="6" 
-                                             Margin="0,8,0,0"
-                                             Background="#F1F1F4" 
-                                             Foreground="#4F46E5" 
-                                             BorderThickness="0">
+                                        <ProgressBar 
+                                            Grid.Row="1" 
+                                            Value="{Binding ProgressPercent, Mode=OneWay}" 
+                                            Minimum="0" 
+                                            Maximum="100" 
+                                            Height="6" 
+                                            Margin="0,8,0,0"
+                                            Background="#F1F1F4" 
+                                            Foreground="#4F46E5" 
+                                            BorderThickness="0">
                                             <ProgressBar.Template>
                                                 <ControlTemplate TargetType="ProgressBar">
                                                     <Grid x:Name="TemplateRoot">
@@ -194,7 +196,12 @@
                                         </ProgressBar>
                                     </Grid>
 
-                                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <ui:SymbolIcon Symbol="ArrowRight12" Margin="0,0,6,0"/>
+                                        <ui:TextBlock Text="{Binding CurrentTask, StringFormat={}{0:MMM dd}}" FontSize="12" Foreground="#666666" FontWeight="Medium" VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
                                         <ui:TextBlock Text="📅" FontSize="12" Foreground="#666666" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                         <ui:TextBlock Text="{Binding DueDate, StringFormat={}{0:MMM dd}}" FontSize="10" Foreground="#666666" FontWeight="Medium" VerticalAlignment="Center"/>
                                     </StackPanel>
@@ -203,8 +210,21 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+            </StackPanel>
+            <StackPanel Margin="0,30,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="735" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
+                    <StackPanel Grid.Column="0">
+                        <ui:TextBlock Text="Recent Projects" Margin="0,0,0,10"/>
+                        <ui:Card>
                 
+                        </ui:Card>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

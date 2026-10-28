@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Dashboard.Dtos;
 using SoloProjectManagement.UI.Features.Projects;
 using System.Collections.ObjectModel;

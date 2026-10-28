@@ -1,4 +1,5 @@
-﻿using SoloProjectManagement.UI.Features.Dashboard.Dtos;
+﻿using SoloProjectManagement.UI.Dtos;
+using SoloProjectManagement.UI.Features.Dashboard.Dtos;
 
 namespace SoloProjectManagement.UI.Features.Dashboard
 {
