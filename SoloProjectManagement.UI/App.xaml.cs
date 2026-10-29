@@ -30,6 +30,7 @@ namespace SoloProjectManagement.UI
 
 			var window = new MainWindow { DataContext = new MainViewModel() };
 			navigation.SetNavigationControl(window.Navigation);
+			window.Navigation.SetPageProviderService(pages);
 			window.Show();
 
 			navigation.Navigate(typeof(DashboardPage));

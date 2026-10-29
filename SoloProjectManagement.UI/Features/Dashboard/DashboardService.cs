@@ -64,7 +64,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 					p.DueDate,
 					TotalTasks = p.Tasks.Count(),
 					CompletedTasks = p.Tasks.Count(t => t.Status == TaskStatus.Completed),
-					Tasks = p.Tasks
+					p.Tasks
 				})
 				.ToListAsync(ct);
 

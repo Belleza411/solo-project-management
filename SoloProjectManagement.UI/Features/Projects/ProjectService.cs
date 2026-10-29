@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Common;
+using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Projects.Dtos;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
@@ -46,34 +47,55 @@ namespace SoloProjectManagement.UI.Features.Projects
 			return true;
 		}
 
-		public async Task<PagedResult<ProjectDto>> GetAllAsync(int pageNumber = 1, int pageSize = 6, CancellationToken ct = default)
+		public async Task<PagedResult<ProjectCardDto>> GetAllAsync(
+			int pageNumber = 1, int pageSize = 6, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
-			var projects = await db.Projects
-				.Include(p => p.Tasks)  
+			var totalCount = await db.Projects.CountAsync(ct);
+
+			var rows = await db.Projects
 				.AsNoTracking()
+				.OrderBy(p => p.Title)
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
-				.Select(p => new ProjectDto(
-					Id: p.Id,
-					Category: p.Category,
-					Title: p.Title,
-					Description: p.Description ?? "",
-					Status: p.Status,
-					DueDate: p.DueDate,
-					CompletedTasks: p.Tasks.Count(t => t.Status == TaskStatus.Completed),
-					TotalTasks: p.Tasks.Count,
-					UpdatedAt: p.UpdatedAt))
+				.Select(p => new
+				{
+					p.Id,
+					p.Category,
+					p.Title,
+					p.Description,
+					p.Status,
+					p.DueDate,
+					TotalTasks = p.Tasks.Count(),
+					CompletedTasks = p.Tasks.Count(t => t.Status == TaskStatus.Completed),
+					CurrentTask = p.Tasks
+						.Where(t => t.Status == TaskStatus.InProgress
+								 && t.Priority == TaskPriority.High)
+						.Select(t => t.Name)
+						.FirstOrDefault()
+				})
 				.ToListAsync(ct);
-			 
-			var totalCount = projects.Count;
-			 
-			return new PagedResult<ProjectDto>(
-				Items: projects,
-				PageNumber: pageNumber,
-				PageSize: pageSize,
-				TotalCount: totalCount);
+
+			var items = rows.Select(r =>
+			{
+				var progressPercent = r.TotalTasks == 0
+					? 0
+					: (int)Math.Round(r.CompletedTasks * 100.0 / r.TotalTasks);
+
+				return new ProjectCardDto(
+					r.Id,
+					r.Category,
+					r.Title,
+					r.Description ?? "",
+					r.CurrentTask ?? "No task",
+					r.Status,
+					r.DueDate,
+					$"{r.CompletedTasks} / {r.TotalTasks} tasks",
+					progressPercent);
+			}).ToList();
+
+			return new PagedResult<ProjectCardDto>(items, pageNumber, pageSize, totalCount);
 		}
 
 		public async Task<Project?> GetByIdAsync(Guid id, CancellationToken ct = default)

@@ -4,11 +4,207 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:SoloProjectManagement.UI.Features.Projects"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ProjectPage">
+      Title="Projects">
 
-    <Grid>
-        <TextBlock Text="Hey" />
-    </Grid>
+    <Page.Resources>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,0,16,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="ItemBorder" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ItemBorder" Property="TextBlock.Foreground" Value="#4B49AC"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="BorderBrush" Value="#4B49AC"/>
+                                <Setter Property="Foreground" Value="#4B49AC"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer Margin="40,34">
+        <StackPanel>
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ui:TextBlock
+                        Grid.Column="0"
+                        Text="Projects"
+                        FontSize="30"
+                        FontWeight="SemiBold"
+                        Margin="0,8"/>
+
+                    <ui:Button
+                        Grid.Column="1"
+                        Content="Add Project"/>
+                </Grid>
+                <ui:TextBlock
+                    Text="A clear view of what you’re building, what’s next, and how far you’ve come."
+                    FontSize="12"/>
+            </StackPanel>
+            
+            <Grid VerticalAlignment="Top" Margin="0,20,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ListBox Grid.Row="0" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBoxItem IsSelected="True">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="All projects" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Active" Foreground="#6C757D" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Planned" Foreground="#6C757D" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Completed" Foreground="#6C757D" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Archived" Foreground="#6C757D" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+
+                <Separator Grid.Row="1" Height="1" Background="#E0E0E0" Margin="0,-1,0,0" VerticalAlignment="Top"/>
+            </Grid>
+
+            <ui:ListView ItemsSource="{Binding Projects}" Margin="0,10,0,0">
+                <ui:ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ui:ListView.ItemsPanel>
+                <ui:ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ui:Card>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0" Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <ContentControl Grid.Column="0" Style="{StaticResource ProjectIconTile}"
+                                            Content="{Binding}"/>
+
+                                    <ContentControl Grid.Column="1" Style="{StaticResource ProjectStatusBadge}"
+                                            Content="{Binding Status, Converter={StaticResource SpacedEnumConverter}}"/>
+                                </Grid>
+
+                                <StackPanel Grid.Row="1" Margin="0,0,0,24">
+                                    <ui:TextBlock Text="{Binding Title}" 
+                                                FontSize="18" 
+                                                FontWeight="SemiBold" 
+                                                Foreground="#1A1A1A" 
+                                                Margin="0,0,0,6"
+                                                TextWrapping="Wrap"/>
+
+                                    <ui:TextBlock Text="{Binding Description}" 
+                                                FontSize="14" 
+                                                Foreground="#666666" 
+                                                TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <Grid Grid.Row="2" Margin="0,0,0,20">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <ui:TextBlock Grid.Row="0" Text="{Binding TasksFraction}" FontSize="13" Foreground="#666666" HorizontalAlignment="Left"/>
+                                    <ui:TextBlock Grid.Row="0" Text="{Binding ProgressPercent, StringFormat={}{0}%}"  FontSize="13" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Right"/>
+
+                                    <ProgressBar 
+                                        Grid.Row="1" 
+                                        Value="{Binding ProgressPercent, Mode=OneWay}" 
+                                        Minimum="0" 
+                                        Maximum="100" 
+                                        Height="6" 
+                                        Margin="0,8,0,0"
+                                        Background="#F1F1F4" 
+                                        Foreground="#4F46E5" 
+                                        BorderThickness="0">
+                                        <ProgressBar.Template>
+                                            <ControlTemplate TargetType="ProgressBar">
+                                                <Grid x:Name="TemplateRoot">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="3"/>
+                                                    <Border x:Name="PART_Indicator" Background="{TemplateBinding Foreground}" CornerRadius="3" HorizontalAlignment="Left"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </ProgressBar.Template>
+                                    </ProgressBar>
+                                </Grid>
+
+                                <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <ui:SymbolIcon Symbol="ArrowRight12" Margin="0,0,6,0"/>
+                                    <ui:TextBlock Text="{Binding CurrentTask, StringFormat={}{0:MMM dd}}" FontSize="12" Foreground="#666666" FontWeight="Medium" VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <ui:TextBlock Text="📅" FontSize="12" Foreground="#666666" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <ui:TextBlock Text="{Binding DueDate, StringFormat={}{0:MMM dd}}" FontSize="10" Foreground="#666666" FontWeight="Medium" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </ui:Card>
+                    </DataTemplate>
+                </ui:ListView.ItemTemplate>
+            </ui:ListView>
+
+            <ui:TextBlock TextBlock="{Binding ProjectsFooter}"/>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

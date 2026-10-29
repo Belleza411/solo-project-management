@@ -1,12 +1,12 @@
 ﻿using SoloProjectManagement.UI.Common;
-using SoloProjectManagement.UI.Features.Projects.Dtos;
+using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Models;
 
 namespace SoloProjectManagement.UI.Features.Projects
 {
 	public interface IProjectService
 	{
-		Task<PagedResult<ProjectDto>> GetAllAsync(int pageNumber = 1, int pageSize = 6, CancellationToken ct = default);
+		Task<PagedResult<ProjectCardDto>> GetAllAsync(int pageNumber = 1, int pageSize = 6, CancellationToken ct = default);
 		Task<Project?> GetByIdAsync(Guid id, CancellationToken ct = default);
 		Task<Project> CreateAsync(
 			string title,
@@ -15,7 +15,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			DateTime dueDate,
 			CancellationToken ct = default);
 		Task<bool> UpdateAsync(
-			Guid id, 
+			Guid id,
 			string title,
 			string? description,
 			DateTime dueDate,

@@ -11,21 +11,19 @@
 
     <ScrollViewer Margin="40, 34">
         <StackPanel>
-            <Grid>
-                <StackPanel>
-                    <ui:TextBlock 
+            <StackPanel>
+                <ui:TextBlock 
                         Text="{Binding DateText}"
                         FontSize="10"/>
-                    <ui:TextBlock 
+                <ui:TextBlock 
                         Text="Here's your progress"
                         FontSize="30"
                         FontWeight="SemiBold"
                         Margin="0,8"/>
-                    <ui:TextBlock
+                <ui:TextBlock
                         Text="{Binding Greeting, StringFormat={}{0}. Here how your projects and tasks are shaping up today.}"
                         FontSize="12"/>
-                </StackPanel>
-            </Grid>
+            </StackPanel>
 
             <UniformGrid Columns="4" Margin="0,30,0,30">
                 <ui:Card Margin="0,0,10,0">
@@ -214,16 +212,79 @@
             <StackPanel Margin="0,30,0,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="735" />
+                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0">
-                        <ui:TextBlock Text="Recent Projects" Margin="0,0,0,10"/>
-                        <ui:Card>
-                
-                        </ui:Card>
-                    </StackPanel>
+                    <ui:Card Grid.Column="0">
+                        <ItemsControl ItemsSource="{Binding RecentTasks}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" Text="Task name" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12"/>
+                                            <TextBlock Grid.Column="1" Text="Status" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12"/>
+                                            <TextBlock Grid.Column="2" Text="Priority" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12"/>
+                                            <TextBlock Grid.Column="3" Text="Due date" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12"/>
+                                        </Grid>
+
+                                        <Grid Grid.Row="1" Margin="0,20">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" MinWidth="120" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding Name}" 
+                                                               FontSize="14" 
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{Binding ProjectTitle}" 
+                                                            FontSize="12" 
+                                                            Margin="0,4,0,0"
+                                                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"/>
+                                            </StackPanel>
+
+                                            <ui:TextBlock Grid.Column="1" Text="Active" />
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <ui:SymbolIcon Symbol="Flag16" Margin="0,0,6,0"/>
+                                                    <TextBlock Text="High" 
+                                                               VerticalAlignment="Center"
+                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                            <ui:TextBlock Grid.Column="3" Text="Today" />
+                                        </Grid>
+
+                                        <Grid Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:TextBlock Grid.Column="0" Text="{Binding TasksFooter}" />
+                                            <ui:Button Grid.Column="1" Content="Add Tasks" />
+                                        </Grid>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                    </ui:Card>
                 </Grid>
             </StackPanel>
         </StackPanel>

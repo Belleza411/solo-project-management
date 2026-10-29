@@ -11,9 +11,10 @@ namespace SoloProjectManagement.UI.Features.Projects
 		public ProjectViewModel ViewModel { get; }
 		public ProjectsPage(ProjectViewModel viewModel)
 		{
+			InitializeComponent();
+
 			ViewModel = viewModel;
 			DataContext = viewModel;
-			InitializeComponent();
 		}
 	}
 }
