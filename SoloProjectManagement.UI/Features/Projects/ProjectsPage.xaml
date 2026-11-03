@@ -114,15 +114,15 @@
                 <Separator Grid.Row="1" Height="1" Background="#E0E0E0" Margin="0,-1,0,0" VerticalAlignment="Top"/>
             </Grid>
 
-            <ui:ListView ItemsSource="{Binding Projects}" Margin="0,10,0,0">
-                <ui:ListView.ItemsPanel>
+            <ItemsControl ItemsSource="{Binding Projects}" Margin="0,10,0,0">
+                <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
+                        <UniformGrid Columns="3" IsItemsHost="True"/>
                     </ItemsPanelTemplate>
-                </ui:ListView.ItemsPanel>
-                <ui:ListView.ItemTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ui:Card>
+                        <ui:Card Margin="0,0,10,0">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -201,10 +201,10 @@
                             </Grid>
                         </ui:Card>
                     </DataTemplate>
-                </ui:ListView.ItemTemplate>
-            </ui:ListView>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-            <ui:TextBlock TextBlock="{Binding ProjectsFooter}"/>
+            <ui:TextBlock Text="{Binding ProjectsFooter}" FontSize="11" Margin="0,22,0,0"/>
         </StackPanel>
     </ScrollViewer>
 </Page>

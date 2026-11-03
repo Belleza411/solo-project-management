@@ -98,20 +98,19 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 			using var db = new ProjectDbContext(connectionString);
 
 			return await db.ProjectTasks
-				.AsNoTracking()
-				.Where(t => 
-					t.Status == TaskStatus.InProgress
-					&& t.Status == TaskStatus.Overdue)
-				.OrderBy(t => t.DueDate)
-				.ThenBy(t => t.Priority)
-				.Take(10)
-				.Select(t => new RecentTaskDto(
-					Name: t.Name,
-					ProjectTitle: t.Project.Title,
-					Status: t.Status,
-					Priority: t.Priority,
-					DueDate: t.DueDate))
-				.ToListAsync(ct);
+			   .AsNoTracking()
+			   .Include(t => t.Project) 
+			   .Where(t => t.Status != TaskStatus.Completed)
+			   .OrderBy(t => t.Priority)
+			   .ThenBy(t => t.DueDate)
+			   .Take(5)
+			   .Select(t => new RecentTaskDto(
+				   Name: t.Name,
+				   ProjectTitle: t.Project != null ? t.Project.Title : "No Project", 
+				   Status: t.Status,
+				   Priority: t.Priority,
+				   DueDate: t.DueDate))
+			   .ToListAsync(ct);
 		}
 
 		private static (DateTime start, DateTime end) GetThisWeekRange()

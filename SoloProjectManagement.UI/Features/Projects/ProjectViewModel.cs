@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using SoloProjectManagement.UI.Dtos;
-using SoloProjectManagement.UI.Services;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
-using Wpf.Ui.Abstractions.Controls;
 using INavigationAware = Wpf.Ui.Abstractions.Controls.INavigationAware;
 
 namespace SoloProjectManagement.UI.Features.Projects
@@ -39,7 +37,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			catch (Exception ex)
 			{
 				ErrorMessage = ex.Message;
-				System.Diagnostics.Debug.WriteLine(ex.Message);  
+				System.Diagnostics.Debug.WriteLine(ex.Message);
 			}
 		}
 

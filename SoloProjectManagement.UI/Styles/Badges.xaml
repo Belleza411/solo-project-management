@@ -1,17 +1,21 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <ControlTemplate
         x:Key="IconTileTemplate" 
         TargetType="ContentControl">
-        <Border Width="40" Height="40"
-                CornerRadius="10"
-                Background="{TemplateBinding Background}">
-            <TextBlock Text="{TemplateBinding Tag}"
-                       FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"
-                       FontSize="18"
-                       Foreground="{TemplateBinding Foreground}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+        <Border 
+            Width="40" 
+            Height="40"
+            CornerRadius="10"
+            Background="{TemplateBinding Background}">
+            <TextBlock
+                Text="{TemplateBinding Tag}"
+                FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"
+                FontSize="18"
+                Foreground="{TemplateBinding Foreground}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
         </Border>
     </ControlTemplate>
 
@@ -53,11 +57,13 @@
     </Style>
 
     <ControlTemplate x:Key="ProjectStatusPillTemplate" TargetType="ContentControl">
-        <Border Background="{TemplateBinding Background}"
-                CornerRadius="6"
-                Padding="{TemplateBinding Padding}">
-            <ContentPresenter HorizontalAlignment="Center"
-                              VerticalAlignment="Center"/>
+        <Border 
+            Background="{TemplateBinding Background}"
+            CornerRadius="6"
+            Padding="{TemplateBinding Padding}">
+            <ContentPresenter 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
         </Border>
     </ControlTemplate>
 
@@ -79,12 +85,117 @@
             </DataTrigger>
             <DataTrigger Binding="{Binding Status}" Value="Active">
                 <Setter Property="Background" Value="#CCE5FF"/>
-                <Setter Property="Foreground" Value="#004085 "/>
+                <Setter Property="Foreground" Value="#004085"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding Status}" Value="Completed">
                 <Setter Property="Background" Value="#D4EDDA"/>
                 <Setter Property="Foreground" Value="#155724"/>
             </DataTrigger>
         </Style.Triggers>
+    </Style>
+
+    <ControlTemplate x:Key="TaskStatusPillTemplate">
+        <Border 
+            Background="{TemplateBinding Background}"
+            CornerRadius="6"
+            Padding="{TemplateBinding Padding}">
+            <ContentPresenter 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Border>
+    </ControlTemplate>
+
+    <Style x:Key="TaskStatusBadge" TargetType="ContentControl">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Padding" Value="10,3"/>
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Background" Value="#F9FAFB"/>
+        <Setter Property="Foreground" Value="#111827"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Border Background="{TemplateBinding Background}"
+                        CornerRadius="6"
+                        Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="Todo">
+                <Setter Property="Background" Value="#F9FAFB"/>
+                <Setter Property="Foreground" Value="#111827"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Status}" Value="InProgress">
+                <Setter Property="Background" Value="#D4EDDA"/>
+                <Setter Property="Foreground" Value="#155724"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Status}" Value="Completed">
+                <Setter Property="Background" Value="#E5E7EB"/>
+                <Setter Property="Foreground" Value="#4B5563"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Status}" Value="Overdue">
+                <Setter Property="Background" Value="#FEE2E2"/>
+                <Setter Property="Foreground" Value="#991B1B"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="TaskTitle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Status}" Value="Done">
+                <Setter Property="TextDecorations" Value="Strikethrough"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="DueText" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DueDate}" Value="Today">
+                <Setter Property="Foreground" Value="{DynamicResource SystemAccentColorPrimaryBrush}"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="PriorityFlag" TargetType="ui:SymbolIcon">
+        <Setter Property="Symbol" Value="Flag24"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Foreground" Value="#B7791F"/>
+        <Setter Property="Margin" Value="0,0,8,0"/>
+        <Setter Property="Visibility" Value="Collapsed"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Priority}" Value="High">
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="PriorityGlyph" TargetType="TextBlock">
+        <Setter Property="Text" Value="-"/>
+        <Setter Property="Margin" Value="0,0,8,0"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Priority}" Value="High">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Priority}" Value="Medium">
+                <Setter Property="Text" Value="="/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="HeaderText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12.5"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
     </Style>
 </ResourceDictionary>
