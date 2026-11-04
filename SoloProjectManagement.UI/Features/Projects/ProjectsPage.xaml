@@ -43,7 +43,11 @@
         </Style>
     </Page.Resources>
 
-    <ScrollViewer Margin="40,34">
+    <ScrollViewer Margin="40,34"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  CanContentScroll="False"
+                  PanningMode="VerticalOnly">
         <StackPanel>
             <StackPanel>
                 <Grid>

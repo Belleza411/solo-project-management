@@ -18,6 +18,8 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 
 		[ObservableProperty]
 		private DashboardOverviewDto _overview;
+		[ObservableProperty]
+		private LeftOffTaskDto? _leftOffTask;
 
 		[ObservableProperty]
 		private int _totalTasksCount;
@@ -51,16 +53,17 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				var overview = dashboardService.GetOverviewAsync();
 				var recentProjects = dashboardService.GetRecentProjectsAsync();
 				var recentTasks = dashboardService.GetRecentTasksAsync();
-				await Task.WhenAll(overview, recentProjects, recentTasks);
+				var leftOffTask = dashboardService.GetLeftOffTask();
+				await Task.WhenAll(overview, recentProjects, recentTasks, leftOffTask);
 
 				Overview = overview.Result;
 				Replace(RecentProjects, recentProjects.Result);
 				Replace(RecentTasks, recentTasks.Result);
+				LeftOffTask = leftOffTask.Result;
 
 				TotalTasksCount = recentTasks.Result.Count;
 
 				OnPropertyChanged(nameof(TasksFooter));
-
 			}
 			catch (Exception ex)
 			{

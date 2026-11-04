@@ -9,7 +9,12 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Dashboard">
 
-    <ScrollViewer Margin="40, 34">
+    <ScrollViewer 
+        Margin="40,34"
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto"
+        CanContentScroll="False"
+        PanningMode="VerticalOnly">
         <StackPanel>
             <StackPanel>
                 <ui:TextBlock 
@@ -209,119 +214,173 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </StackPanel>
-            <StackPanel Margin="0,30,0,0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="750" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+            <Grid Margin="0,30,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Column="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
+                <Grid Grid.Column="0" Margin="0,0,24,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                        <ui:TextBlock 
-                            Grid.Row="0"
-                            Text="Recent Tasks"
-                            Margin="0,0,0,10"
-                            FontSize="16"
-                            FontWeight="SemiBold"/>
+                    <ui:TextBlock 
+                        Grid.Row="0"
+                        Text="Recent Tasks"
+                        Margin="0,0,0,10"
+                        FontSize="16"
+                        FontWeight="SemiBold"/>
 
-                        <ui:Card Grid.Row="1" Padding="0" VerticalAlignment="Top">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                    <ui:Card Grid.Row="1" Padding="0" VerticalAlignment="Top">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                                <Border Grid.Row="0" Padding="20,12" CornerRadius="8,8,0,0"
-                                    Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                                    BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
-                                    BorderThickness="0,0,0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="130"/>
-                                            <ColumnDefinition Width="110"/>
-                                            <ColumnDefinition Width="100"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <TextBlock Grid.Column="0" Text="Task name" Style="{StaticResource HeaderText}"/>
-                                        <TextBlock Grid.Column="1" Text="Status"    Style="{StaticResource HeaderText}"/>
-                                        <TextBlock Grid.Column="2" Text="Priority"  Style="{StaticResource HeaderText}"/>
-                                        <TextBlock Grid.Column="3" Text="Due date"  Style="{StaticResource HeaderText}"/>
-                                    </Grid>
-                                </Border>
+                            <Border Grid.Row="0" Padding="20,12" CornerRadius="8,8,0,0"
+                                Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="130"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="100"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <ItemsControl Grid.Row="1" ItemsSource="{Binding RecentTasks}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border 
-                                                Padding="20,14"
-                                                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
-                                                BorderThickness="0,0,0,1">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="130"/>
-                                                        <ColumnDefinition Width="110"/>
-                                                        <ColumnDefinition Width="100"/>
-                                                    </Grid.ColumnDefinitions>
-
-                                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                                        <ui:TextBlock 
-                                                            Text="{Binding Name}" 
-                                                            Style="{StaticResource TaskTitle}" />
-                                                        
-                                                        <ui:TextBlock 
-                                                            Text="{Binding ProjectTitle}" 
-                                                            FontSize="12" 
-                                                            Margin="0,3,0,0"
-                                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    </StackPanel>
-
-
-                                                    <ContentControl 
-                                                        Grid.Column="1" 
-                                                        Style="{StaticResource TaskStatusBadge}"
-                                                        Content="{Binding Status, Converter={StaticResource SpacedEnumConverter}}"/>
-
-                                                    <StackPanel 
-                                                        Grid.Column="2" 
-                                                        Orientation="Horizontal" 
-                                                        VerticalAlignment="Center">
-                                                        <ui:SymbolIcon Style="{StaticResource PriorityFlag}"/>
-                                                        <TextBlock Style="{StaticResource PriorityGlyph}"/>
-                                                        <TextBlock 
-                                                            Text="{Binding Priority}" 
-                                                            FontSize="12.5" 
-                                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                                    </StackPanel>
-
-                                                    <TextBlock 
-                                                        Grid.Column="3" 
-                                                        Text="{Binding DueDate, StringFormat={}{0:MMM dd}}" 
-                                                        Style="{StaticResource DueText}"/>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <Grid Grid.Row="2" Margin="20,10">
-                                    <TextBlock Text="Showing 6 of 42 tasks" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                    <ui:Button HorizontalAlignment="Right" Appearance="Transparent"
-                                       Content="Add task" Icon="{ui:SymbolIcon Add24}"
-                                       Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
-                                       Command="{Binding AddTaskCommand}"/>
+                                    <TextBlock Grid.Column="0" Text="Task name" Style="{StaticResource HeaderText}"/>
+                                    <TextBlock Grid.Column="1" Text="Status"    Style="{StaticResource HeaderText}"/>
+                                    <TextBlock Grid.Column="2" Text="Priority"  Style="{StaticResource HeaderText}"/>
+                                    <TextBlock Grid.Column="3" Text="Due date"  Style="{StaticResource HeaderText}"/>
                                 </Grid>
-                            </Grid> 
-                        </ui:Card>
-                    </Grid>
+                            </Border>
+
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding RecentTasks}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border 
+                                            Padding="20,14"
+                                            BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                                            BorderThickness="0,0,0,1">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="130"/>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                    <ui:TextBlock 
+                                                        Text="{Binding Name}" 
+                                                        Style="{StaticResource TaskTitle}" />
+
+                                                    <ui:TextBlock 
+                                                        Text="{Binding ProjectTitle}" 
+                                                        FontSize="12" 
+                                                        Margin="0,3,0,0"
+                                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                </StackPanel>
+
+
+                                                <ContentControl 
+                                                    Grid.Column="1" 
+                                                    Style="{StaticResource TaskStatusBadge}"
+                                                    Content="{Binding Status, Converter={StaticResource SpacedEnumConverter}}"/>
+
+                                                <StackPanel 
+                                                    Grid.Column="2" 
+                                                    Orientation="Horizontal" 
+                                                    VerticalAlignment="Center">
+                                                    <ui:SymbolIcon Style="{StaticResource PriorityFlag}"/>
+                                                    <TextBlock Style="{StaticResource PriorityGlyph}"/>
+                                                    <TextBlock 
+                                                        Text="{Binding Priority}" 
+                                                        FontSize="12.5" 
+                                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                </StackPanel>
+
+                                                <TextBlock 
+                                                    Grid.Column="3" 
+                                                    Text="{Binding DueDate, StringFormat={}{0:MMM dd}}" 
+                                                    Style="{StaticResource DueText}"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Grid Grid.Row="2" Margin="20,10">
+                                <TextBlock Text="Showing 6 of 42 tasks" FontSize="12" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                <ui:Button HorizontalAlignment="Right" Appearance="Transparent"
+                                    Content="Add task" Icon="{ui:SymbolIcon Add24}"
+                                    Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                                    Command="{Binding AddTaskCommand}"/>
+                            </Grid>
+                        </Grid>
+                    </ui:Card>
                 </Grid>
-            </StackPanel>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+ 
+                    <ui:Card Grid.Row="0" Background="#ECEBF7" Padding="20">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0" Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ui:TextBlock 
+                                    Grid.Column="0"
+                                    Text="Task that you left off"
+                                    FontWeight="SemiBold"
+                                    FontSize="16"/>
+
+                                <ui:SymbolIcon 
+                                    Grid.Column="1" 
+                                    Symbol="Flag20"
+                                    FontSize="20"/>
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <ui:SymbolIcon 
+                                    Grid.Column="0"
+                                    Symbol="ArrowClockwise32" 
+                                    FontSize="36"
+                                    Margin="0,0,16,0"/>
+                                
+                                <StackPanel VerticalAlignment="Center" Grid.Column="1">
+                                    <ui:TextBlock 
+                                        Text="{Binding LeftOffTask.Name}"
+                                        FontSize="16"
+                                        FontWeight="SemiBold"/>
+                                    <ui:TextBlock 
+                                        Text="{Binding LeftOffTask.ProjectTitle}"
+                                        FontSize="12"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </ui:Card>
+                </Grid>
+            </Grid>
         </StackPanel>
     </ScrollViewer>
 </Page>

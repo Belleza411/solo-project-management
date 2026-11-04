@@ -20,7 +20,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 					Total = g.Count(),
 					Active = g.Count(p => p.Status == ProjectStatus.Active)
 				})
-				.FirstOrDefaultAsync(ct) ?? new { Total = 0, Active = 0};
+				.FirstOrDefaultAsync(ct) ?? new { Total = 0, Active = 0 };
 
 			var (thisWeekStart, thisWeekEnd) = GetThisWeekRange();
 			var (lastWeekStart, lastWeekEnd) = GetLastWeekRange();
@@ -42,7 +42,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				TotalProjects: new MetricCardDto("Total Projects", projectMetrics.Total, $"{projectMetrics.Active} currently active"),
 				TotalTasks: new MetricCardDto("Total Tasks", taskMetrics.Total, $"{taskMetrics.InProgress} tasks currently in progress"),
 				CompletedTasksThisWeek: new MetricCardDto("Completed Task This Week", taskMetrics.CompletedThisWeek, GetDifference(taskMetrics.CompletedThisWeek, taskMetrics.CompletedLastWeek)),
-				OverdueTasks: new MetricCardDto("Overdue Tasks", taskMetrics.Overdue, $"{taskMetrics.HighPriorityOverdue} high priority overdue tasks") 
+				OverdueTasks: new MetricCardDto("Overdue Tasks", taskMetrics.Overdue, $"{taskMetrics.HighPriorityOverdue} high priority overdue tasks")
 			);
 		}
 
@@ -75,7 +75,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 					: (int)Math.Round(p.CompletedTasks * 100.0 / p.TotalTasks);
 
 				string tasksFraction = $"{p.CompletedTasks} / {p.TotalTasks} tasks";
-				var currentTask = p.Tasks.FirstOrDefault(p => 
+				var currentTask = p.Tasks.FirstOrDefault(p =>
 					p.Status == TaskStatus.InProgress
 					&& p.Priority == TaskPriority.High);
 
@@ -99,18 +99,41 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 
 			return await db.ProjectTasks
 			   .AsNoTracking()
-			   .Include(t => t.Project) 
+			   .Include(t => t.Project)
 			   .Where(t => t.Status != TaskStatus.Completed)
 			   .OrderBy(t => t.Priority)
 			   .ThenBy(t => t.DueDate)
 			   .Take(5)
 			   .Select(t => new RecentTaskDto(
 				   Name: t.Name,
-				   ProjectTitle: t.Project != null ? t.Project.Title : "No Project", 
+				   ProjectTitle: t.Project != null ? t.Project.Title : "No Project",
 				   Status: t.Status,
 				   Priority: t.Priority,
 				   DueDate: t.DueDate))
 			   .ToListAsync(ct);
+		}
+
+		public async Task<LeftOffTaskDto?> GetLeftOffTask(CancellationToken ct = default)
+		{
+			using var db = new ProjectDbContext(connectionString);
+
+			var leftOffTask = await db.ProjectTasks
+			   .AsNoTracking()
+			   .Select(t => new
+			   {			   
+				   TaskName = t.Name,
+				   t.Status,
+				   ProjectTitle = t.Project != null ? t.Project.Title : "No Project",
+				   LastActivity = t.ActivityLogs.Max(a => (DateTime?)a.CreatedAt)
+			   })
+			   .Where(x => x.LastActivity != null && x.Status != TaskStatus.Completed)
+			   .OrderByDescending(x => x.LastActivity)
+			   .FirstOrDefaultAsync(ct);
+
+			return new LeftOffTaskDto(
+				Name: leftOffTask?.TaskName ?? "No task",
+				ProjectTitle: leftOffTask?.ProjectTitle ?? "No project"
+			);
 		}
 
 		private static (DateTime start, DateTime end) GetThisWeekRange()
