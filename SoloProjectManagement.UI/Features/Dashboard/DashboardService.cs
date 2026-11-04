@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Humanizer;
+using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Dashboard.Dtos;
 using SoloProjectManagement.UI.Models;
@@ -113,7 +114,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 			   .ToListAsync(ct);
 		}
 
-		public async Task<LeftOffTaskDto?> GetLeftOffTask(CancellationToken ct = default)
+		public async Task<LeftOffTaskDto?> GetLeftOffTaskAsync(CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
@@ -134,6 +135,26 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				Name: leftOffTask?.TaskName ?? "No task",
 				ProjectTitle: leftOffTask?.ProjectTitle ?? "No project"
 			);
+		}
+
+		public async Task<List<ActivityLogDto>> GetRecentActivityAsync(CancellationToken ct = default)
+		{
+			using var db = new ProjectDbContext(connectionString);
+
+			return await db.ActivityLogs
+				.AsNoTracking()
+				.OrderByDescending(a => a.CreatedAt)
+				.Take(5)
+				.Join(
+					db.Projects,
+					log => log.ProjectId,
+					project => project.Id,
+					(log, project) => new ActivityLogDto(
+						log.Name,
+						project.Title,
+						log.CreatedAt.Humanize())
+				)
+				.ToListAsync(ct);
 		}
 
 		private static (DateTime start, DateTime end) GetThisWeekRange()

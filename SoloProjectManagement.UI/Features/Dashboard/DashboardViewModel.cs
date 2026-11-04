@@ -15,6 +15,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 	{
 		public ObservableCollection<ProjectCardDto> RecentProjects { get; } = [];
 		public ObservableCollection<RecentTaskDto> RecentTasks { get; } = [];
+		public ObservableCollection<ActivityLogDto> RecentActivities { get; } = [];
 
 		[ObservableProperty]
 		private DashboardOverviewDto _overview;
@@ -53,12 +54,21 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				var overview = dashboardService.GetOverviewAsync();
 				var recentProjects = dashboardService.GetRecentProjectsAsync();
 				var recentTasks = dashboardService.GetRecentTasksAsync();
-				var leftOffTask = dashboardService.GetLeftOffTask();
-				await Task.WhenAll(overview, recentProjects, recentTasks, leftOffTask);
+				var leftOffTask = dashboardService.GetLeftOffTaskAsync();
+				var recentActivity = dashboardService.GetRecentActivityAsync();
+				await Task.WhenAll(
+					overview,
+					recentProjects,
+					recentTasks,
+					leftOffTask,
+					recentActivity);
 
 				Overview = overview.Result;
+
 				Replace(RecentProjects, recentProjects.Result);
 				Replace(RecentTasks, recentTasks.Result);
+				Replace(RecentActivities, recentActivity.Result);
+
 				LeftOffTask = leftOffTask.Result;
 
 				TotalTasksCount = recentTasks.Result.Count;
