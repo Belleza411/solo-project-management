@@ -22,6 +22,15 @@ namespace SoloProjectManagement.UI.Features.Tasks
 				DueDate = request.DueDate
 			};
 
+			db.ActivityLogs.Add(new ActivityLog
+			{
+				Name = $"You added task: {request.Name}",
+				EntityType = ActivityEntityType.Task,
+				ActionType = ActivityActionType.Created,
+				ProjectId = task.ProjectId,
+				ProjectTaskId = task.Id
+			});
+
 			db.ProjectTasks.Add(task);
 			await db.SaveChangesAsync(ct);
 
@@ -35,6 +44,15 @@ namespace SoloProjectManagement.UI.Features.Tasks
 			var task = await GetByIdAsync(id, ct);
 
 			if (task is null) return false;
+
+			db.ActivityLogs.Add(new ActivityLog
+			{
+				Name = $"You deleted task: {task.Name}",
+				EntityType = ActivityEntityType.Task,
+				ActionType = ActivityActionType.Deleted ,
+				ProjectId = task.ProjectId,
+				ProjectTaskId = task.Id
+			});
 
 			db.ProjectTasks.Remove(task);
 			await db.SaveChangesAsync(ct);
