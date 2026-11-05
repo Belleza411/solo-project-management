@@ -63,7 +63,7 @@
                             Text="Projects"
                             FontSize="30"
                             FontWeight="SemiBold"
-                            Margin="0,8"/>  
+                            Margin="0,8"/>
 
                         <ui:Button
                             Grid.Column="1"
@@ -214,7 +214,5 @@
                 <ui:TextBlock Text="{Binding ProjectsFooter}" FontSize="11" Margin="0,22,0,0"/>
             </StackPanel>
         </ScrollViewer>
-
-        <ContentPresenter x:Name="RootContentDialog" />
     </Grid>
 </Page>

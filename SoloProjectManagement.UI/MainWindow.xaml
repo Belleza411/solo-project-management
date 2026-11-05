@@ -31,5 +31,7 @@
                                        TargetPageType="{x:Type projects:ProjectsPage}" />
             </ui:NavigationView.MenuItems>
         </ui:NavigationView>
+
+        <ContentPresenter x:Name="RootContentDialog" Grid.RowSpan="2"/>
     </Grid>
 </ui:FluentWindow>

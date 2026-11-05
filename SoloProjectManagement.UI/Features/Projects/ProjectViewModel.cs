@@ -11,9 +11,9 @@ namespace SoloProjectManagement.UI.Features.Projects
 {
 	public partial class ProjectViewModel(
 		ProjectService projectService,
-		INavigationService navigationService) : ObservableObject, INavigationAware
+		INavigationService navigationService,
+		IContentDialogService dialogService) : ObservableObject, INavigationAware
 	{
-		public IContentDialogService? DialogService { get; set; }
 		public ObservableCollection<ProjectCardDto> Projects { get; } = [];
 
 		[ObservableProperty]
@@ -57,12 +57,12 @@ namespace SoloProjectManagement.UI.Features.Projects
 		[RelayCommand]
 		private async Task AddProjectAsync(CancellationToken ct)
 		{
-			if (DialogService is null) return;
+			if (dialogService is null) return;
 
 			var form = new AddProjectViewModel();
-			var dialog = new AddProjectDialog(DialogService.GetDialogHost(), form);
+			var dialog = new AddProjectDialog(dialogService.GetDialogHost(), form);
 
-			var result = await DialogService.ShowAsync(dialog, ct);
+			var result = await dialogService.ShowAsync(dialog, ct);
 			if (result != ContentDialogResult.Primary) return;
 
 			try
@@ -73,6 +73,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 					form.Category,
 					form.Status,
 					form.DueDate, ct);
+
 				await LoadAsync();
 			}
 			catch (Exception ex)

@@ -5,6 +5,7 @@ using SoloProjectManagement.UI.Persistence;
 using SoloProjectManagement.UI.Services;
 using SoloProjectManagement.UI.Shell;
 using System.Windows;
+using Wpf.Ui;
 using NavigationService = Wpf.Ui.NavigationService;
 
 namespace SoloProjectManagement.UI
@@ -22,13 +23,16 @@ namespace SoloProjectManagement.UI
 			var taskService = new TaskService(DatabaseSettings.ConnectionString);
 			var dashboardService = new DashboardService(DatabaseSettings.ConnectionString);
 
+			var dialogService = new ContentDialogService();
+
 			var pages = new PageProvider();
 			var navigation = new NavigationService(pages);
 
 			pages.Register(() => new DashboardPage(new DashboardViewModel(dashboardService, navigation)));
-			pages.Register(() => new ProjectsPage(new ProjectViewModel(projectService, navigation)));
+			pages.Register(() => new ProjectsPage(new ProjectViewModel(projectService, navigation, dialogService)));
 
 			var window = new MainWindow { DataContext = new MainViewModel() };
+			dialogService.SetDialogHost(window.RootContentDialog);
 			navigation.SetNavigationControl(window.Navigation);
 			window.Navigation.SetPageProviderService(pages);
 			window.Show();

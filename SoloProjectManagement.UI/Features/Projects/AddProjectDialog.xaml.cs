@@ -26,10 +26,17 @@ namespace SoloProjectManagement.UI.Features.Projects
 			{
 				return;
 			}
+
 			base.OnButtonClick(button);
 		}
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
 			=> OnButtonClick(ContentDialogButton.Close);
+
+		private void Cancel_Click(object sender, RoutedEventArgs e)
+			=> OnButtonClick(ContentDialogButton.Close);
+
+		private void Create_Click(object sender, RoutedEventArgs e)
+			=> OnButtonClick(ContentDialogButton.Primary);
 	}
 }

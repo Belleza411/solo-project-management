@@ -4,10 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     DialogMaxWidth="560"
-    PrimaryButtonText="Create project"
-    PrimaryButtonAppearance="Primary"
-    CloseButtonText="Cancel"
-    DefaultButton="Primary">
+    IsFooterVisible="False">
     
     <ui:ContentDialog.Title>
         <Grid>
@@ -29,7 +26,7 @@
 
     <StackPanel MinWidth="480">
         <ui:TextBlock Text="Project name *" FontWeight="Medium" Margin="0,0,0,6"/>
-        <ui:TextBox PlaceholderText="e.g. Personal finance app"
+        <ui:TextBox PlaceholderText="Title"
                     Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
 
         <ui:TextBlock Text="Category" FontWeight="Medium" Margin="0,20,0,6"/>
@@ -45,7 +42,7 @@
         </ComboBox>
 
         <ui:TextBlock Text="Description (optional)" FontWeight="Medium" Margin="0,20,0,6"/>
-        <ui:TextBox PlaceholderText="What are you building, and why?"
+        <ui:TextBox PlaceholderText="Description"
                     AcceptsReturn="True"
                     TextWrapping="Wrap"
                     MinHeight="90"
@@ -64,8 +61,24 @@
         </ComboBox>
 
         <ui:TextBlock Text="Due date (optional)" FontWeight="Medium" Margin="0,20,0,6"/>
-        
         <DatePicker SelectedDate="{Binding DueDate}"/>
 
+        <Border Margin="-24,24,-24,0"
+            Padding="24,16"
+            Background="{DynamicResource ControlFillColorSecondaryBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button Content="Cancel"
+                       Appearance="Secondary"
+                       MinWidth="90"
+                       IsCancel="True"
+                       Click="Cancel_Click"/>
+                <ui:Button Content="Create project"
+                       Appearance="Primary"
+                       MinWidth="130"
+                       Margin="12,0,0,0"
+                       IsDefault="True"
+                       Click="Create_Click"/>
+            </StackPanel>
+        </Border>
     </StackPanel>
 </ui:ContentDialog>

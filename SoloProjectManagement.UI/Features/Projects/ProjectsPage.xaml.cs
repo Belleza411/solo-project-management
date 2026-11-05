@@ -14,11 +14,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 		{
 			InitializeComponent();
 
-			var dialogService = new ContentDialogService();
-			dialogService.SetDialogHost(RootContentDialog);
-
 			ViewModel = viewModel;
-			ViewModel.DialogService = dialogService;
 			DataContext = viewModel;
 		}
 	}
