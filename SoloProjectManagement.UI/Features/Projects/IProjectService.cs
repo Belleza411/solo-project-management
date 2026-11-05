@@ -11,8 +11,9 @@ namespace SoloProjectManagement.UI.Features.Projects
 		Task<Project> CreateAsync(
 			string title,
 			string? description,
+			ProjectCategory category,
 			ProjectStatus status,
-			DateTime dueDate,
+			DateTime? dueDate,
 			CancellationToken ct = default);
 		Task<bool> UpdateAsync(
 			Guid id,

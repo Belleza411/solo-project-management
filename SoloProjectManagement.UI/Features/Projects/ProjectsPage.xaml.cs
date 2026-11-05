@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using Wpf.Ui;
 using Wpf.Ui.Abstractions.Controls;
 
 namespace SoloProjectManagement.UI.Features.Projects
@@ -13,7 +14,11 @@ namespace SoloProjectManagement.UI.Features.Projects
 		{
 			InitializeComponent();
 
+			var dialogService = new ContentDialogService();
+			dialogService.SetDialogHost(RootContentDialog);
+
 			ViewModel = viewModel;
+			ViewModel.DialogService = dialogService;
 			DataContext = viewModel;
 		}
 	}

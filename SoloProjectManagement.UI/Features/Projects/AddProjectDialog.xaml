@@ -1,0 +1,71 @@
+﻿<ui:ContentDialog 
+    x:Class="SoloProjectManagement.UI.Features.Projects.AddProjectDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    DialogMaxWidth="560"
+    PrimaryButtonText="Create project"
+    PrimaryButtonAppearance="Primary"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary">
+    
+    <ui:ContentDialog.Title>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Create project" FontSize="24" FontWeight="SemiBold"/>
+
+            <ui:Button Grid.Column="1"
+                       Appearance="Transparent"
+                       Padding="6"
+                       VerticalAlignment="Top"
+                       Click="CloseButton_Click"
+                       Icon="{ui:SymbolIcon Dismiss16}"/>
+        </Grid>
+    </ui:ContentDialog.Title>
+
+    <StackPanel MinWidth="480">
+        <ui:TextBlock Text="Project name *" FontWeight="Medium" Margin="0,0,0,6"/>
+        <ui:TextBox PlaceholderText="e.g. Personal finance app"
+                    Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <ui:TextBlock Text="Category" FontWeight="Medium" Margin="0,20,0,6"/>
+        <ComboBox 
+            HorizontalAlignment="Stretch"
+            ItemsSource="{Binding Categories}"
+            SelectedItem="{Binding Category}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource SpacedEnumConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <ui:TextBlock Text="Description (optional)" FontWeight="Medium" Margin="0,20,0,6"/>
+        <ui:TextBox PlaceholderText="What are you building, and why?"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    MinHeight="90"
+                    VerticalContentAlignment="Top"
+                    Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <ui:TextBlock Text="Status" FontWeight="Medium" Margin="0,20,0,6"/>
+        <ComboBox HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding Statuses}"
+                  SelectedItem="{Binding Status}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource SpacedEnumConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <ui:TextBlock Text="Due date (optional)" FontWeight="Medium" Margin="0,20,0,6"/>
+        
+        <DatePicker SelectedDate="{Binding DueDate}"/>
+
+    </StackPanel>
+</ui:ContentDialog>

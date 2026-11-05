@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
-using SoloProjectManagement.UI.Features.Projects.Dtos;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
 using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
@@ -13,14 +12,16 @@ namespace SoloProjectManagement.UI.Features.Projects
 		public async Task<Project> CreateAsync(
 			string title,
 			string? description,
+			ProjectCategory category,
 			ProjectStatus status,
-			DateTime dueDate,
+			DateTime? dueDate,
 			CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
 			var project = new Project
 			{
+				Category = category,
 				Title = title,
 				Description = description,
 				Status = status,
@@ -122,7 +123,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 				.Include(p => p.Tasks)
 				.FirstOrDefaultAsync(p => p.Id == id, ct);
 		}
-		 
+
 		public async Task<bool> UpdateAsync(
 			Guid id,
 			string title,
