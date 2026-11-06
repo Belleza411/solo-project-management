@@ -19,7 +19,8 @@ namespace SoloProjectManagement.UI.Features.Projects
 			Guid id,
 			string title,
 			string? description,
-			DateTime dueDate,
+			ProjectCategory category,
+			DateTime? dueDate,
 			ProjectStatus status,
 			CancellationToken ct = default);
 		Task<bool> DeleteAsync(Guid Id, CancellationToken ct = default);

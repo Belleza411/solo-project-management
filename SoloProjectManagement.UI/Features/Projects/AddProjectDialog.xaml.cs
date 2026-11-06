@@ -10,7 +10,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 	/// </summary>
 	public partial class AddProjectDialog : ContentDialog
 	{
-		public AddProjectDialog(ContentPresenter? host, AddProjectViewModel viewModel) : base(host)
+		public AddProjectDialog(AddProjectViewModel viewModel)
 		{
 			DataContext = viewModel;
 			InitializeComponent();

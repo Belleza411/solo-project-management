@@ -128,7 +128,8 @@ namespace SoloProjectManagement.UI.Features.Projects
 			Guid id,
 			string title,
 			string? description,
-			DateTime dueDate,
+			ProjectCategory category,
+			DateTime? dueDate,
 			ProjectStatus status,
 			CancellationToken ct = default)
 		{
@@ -140,10 +141,12 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 			project.Title = title;
 			project.Description = description;
+			project.Category = category;
 			project.Status = status;
 			project.DueDate = dueDate;
 			project.UpdatedAt = DateTime.UtcNow;
 
+			db.Projects.Update(project);
 			await db.SaveChangesAsync(ct);
 			return true;
 		}
