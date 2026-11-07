@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using Wpf.Ui.Abstractions.Controls;
 
 namespace SoloProjectManagement.UI.Features.Projects

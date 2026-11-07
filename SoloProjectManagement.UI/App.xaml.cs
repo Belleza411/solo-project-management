@@ -1,5 +1,7 @@
-﻿using SoloProjectManagement.UI.Features.Dashboard;
+﻿using SoloProjectManagement.UI.Common;
+using SoloProjectManagement.UI.Features.Dashboard;
 using SoloProjectManagement.UI.Features.Projects;
+using SoloProjectManagement.UI.Features.Projects.ViewModels;
 using SoloProjectManagement.UI.Features.Tasks;
 using SoloProjectManagement.UI.Persistence;
 using SoloProjectManagement.UI.Services;
@@ -24,12 +26,14 @@ namespace SoloProjectManagement.UI
 			var dashboardService = new DashboardService(DatabaseSettings.ConnectionString);
 
 			var dialogService = new ContentDialogService();
+			var projectContext = new ProjectContext();
 
 			var pages = new PageProvider();
 			var navigation = new NavigationService(pages);
 
 			pages.Register(() => new DashboardPage(new DashboardViewModel(dashboardService, navigation)));
-			pages.Register(() => new ProjectsPage(new ProjectViewModel(projectService, navigation, dialogService)));
+			pages.Register(() => new ProjectsPage(new ProjectViewModel(projectService, navigation, dialogService, projectContext)));
+			pages.Register(() => new ProjectOverviewPage(new ProjectOverviewViewModel(projectService, projectContext)));
 
 			var window = new MainWindow { DataContext = new MainViewModel() };
 			dialogService.SetDialogHost(window.RootContentDialog);

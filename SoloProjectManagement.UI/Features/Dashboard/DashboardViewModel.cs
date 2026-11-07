@@ -18,7 +18,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 		public ObservableCollection<ActivityLogDto> RecentActivities { get; } = [];
 
 		[ObservableProperty]
-		private DashboardOverviewDto _overview;
+		private DashboardOverviewDto? _overview;
 		[ObservableProperty]
 		private LeftOffTaskDto? _leftOffTask;
 

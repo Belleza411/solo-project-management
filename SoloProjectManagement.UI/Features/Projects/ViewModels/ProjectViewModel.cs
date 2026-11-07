@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Projects.ViewModels;
 using System.Collections.ObjectModel;
@@ -13,7 +14,8 @@ namespace SoloProjectManagement.UI.Features.Projects
 	public partial class ProjectViewModel(
 		ProjectService projectService,
 		INavigationService navigationService,
-		IContentDialogService dialogService) : ObservableObject, INavigationAware
+		IContentDialogService dialogService,
+		ProjectContext context) : ObservableObject, INavigationAware
 	{
 		public ObservableCollection<ProjectCardDto> Projects { get; } = [];
 
@@ -129,6 +131,13 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 			await projectService.DeleteAsync(project.Id, ct);
 			await LoadAsync();
+		}
+
+		[RelayCommand]
+		private void GoToOverview(ProjectCardDto project)
+		{
+			context.SelectedProjectId = project.Id;
+			navigationService.Navigate(typeof(ProjectOverviewPage));
 		}
 
 		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)

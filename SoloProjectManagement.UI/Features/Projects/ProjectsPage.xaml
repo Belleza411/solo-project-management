@@ -49,30 +49,28 @@
             VerticalScrollBarVisibility="Auto"
             CanContentScroll="False"
             PanningMode="VerticalOnly">
-        <StackPanel>
-            <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+        <StackPanel Background="Transparent">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                    <ui:TextBlock
-                            Grid.Column="0"
-                            Text="Projects"
-                            FontSize="30"
-                            FontWeight="SemiBold"
-                            Margin="0,8"/>
-
-                    <ui:Button
-                            Grid.Column="1"
-                            Content="Add Project"
-                            Command="{Binding AddProjectCommand}"/>
-                </Grid>
                 <ui:TextBlock
+                        Grid.Column="0"
+                        Text="Projects"
+                        FontSize="30"
+                        FontWeight="SemiBold"
+                        Margin="0,8"/>
+
+                <ui:Button
+                        Grid.Column="1"
+                        Content="Add Project"
+                        Command="{Binding AddProjectCommand}"/>
+            </Grid>
+            <ui:TextBlock
                 Text="A clear view of what you’re building, what’s next, and how far you’ve come."
                 FontSize="12"/>
-            </StackPanel>
 
             <Grid VerticalAlignment="Top" Margin="0,20,0,0">
                 <Grid.RowDefinitions>
@@ -128,7 +126,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ui:Card Margin="0,0,10,0">
+                        <ui:Card Margin="0,0,10,10">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -221,15 +219,15 @@
                                     <ui:TextBlock Grid.Row="0" Text="{Binding ProgressPercent, StringFormat={}{0}%}"  FontSize="13" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Right"/>
 
                                     <ProgressBar 
-                                    Grid.Row="1" 
-                                    Value="{Binding ProgressPercent, Mode=OneWay}" 
-                                    Minimum="0" 
-                                    Maximum="100" 
-                                    Height="6" 
-                                    Margin="0,8,0,0"
-                                    Background="#F1F1F4" 
-                                    Foreground="#4F46E5" 
-                                    BorderThickness="0">
+                                        Grid.Row="1" 
+                                        Value="{Binding ProgressPercent, Mode=OneWay}" 
+                                        Minimum="0" 
+                                        Maximum="100" 
+                                        Height="6" 
+                                        Margin="0,8,0,0"
+                                        Background="#F1F1F4" 
+                                        Foreground="#4F46E5" 
+                                        BorderThickness="0">
                                         <ProgressBar.Template>
                                             <ControlTemplate TargetType="ProgressBar">
                                                 <Grid x:Name="TemplateRoot">
@@ -246,17 +244,31 @@
                                     <ui:TextBlock Text="{Binding CurrentTask, StringFormat={}{0:MMM dd}}" FontSize="12" Foreground="#666666" FontWeight="Medium" VerticalAlignment="Center"/>
                                 </StackPanel>
 
-                                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <ui:TextBlock Text="📅" FontSize="12" Foreground="#666666" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                    <ui:TextBlock Text="{Binding DueDate, StringFormat={}{0:MMM dd}}" FontSize="10" Foreground="#666666" FontWeight="Medium" VerticalAlignment="Center"/>
-                                </StackPanel>
+                                <Grid Grid.Row="4" Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <ui:TextBlock Text="📅" FontSize="12" Foreground="#666666" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <ui:TextBlock Text="{Binding DueDate, StringFormat={}{0:MMM dd}}" FontSize="10" Foreground="#666666" FontWeight="Medium" VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <ui:Button 
+                                        Grid.Column="1" 
+                                        Icon="{ui:SymbolIcon Symbol=ArrowUpRight24}"
+                                        Command="{Binding DataContext.GoToOverviewCommand,
+                                                RelativeSource={RelativeSource AncestorType=Page}}"
+                                        CommandParameter="{Binding}"/>
+                                </Grid>
                             </Grid>
                         </ui:Card>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <ui:TextBlock Text="{Binding ProjectsFooter}" FontSize="11" Margin="0,22,0,0"/>
+            <ui:TextBlock Text="{Binding ProjectsFooter}" FontSize="11"/>
         </StackPanel>
     </ScrollViewer>
 </Page>
