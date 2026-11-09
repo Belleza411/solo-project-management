@@ -109,15 +109,21 @@
                         FontSize="16"
                         FontWeight="SemiBold"/>
 
-                    <ui:Button Grid.Column="1" 
-                       BorderThickness="0"
-                       Foreground="Blue" 
-                       Cursor="Hand"           
-                       HorizontalAlignment="Right" 
-                       VerticalAlignment="Center"
-                       Command="{Binding ViewAllProjectsCommand}">
-                        <DockPanel LastChildFill="True" VerticalAlignment="Center">
-                            <ui:TextBlock Text="View All Projects"  Margin="0,0,6,0" FontSize="11"/>
+                    <ui:Button 
+                        Grid.Column="1" 
+                        BorderThickness="0"
+                        Foreground="Blue" 
+                        Cursor="Hand"           
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Center"
+                        Command="{Binding ViewAllProjectsCommand}">
+                        <DockPanel 
+                            LastChildFill="True" 
+                            VerticalAlignment="Center">
+                            <ui:TextBlock 
+                                Text="View All Projects"  
+                                Margin="0,0,6,0" 
+                                FontSize="11"/>
                             <ui:SymbolIcon Symbol="ArrowUpRight16" FontSize="10" />
                         </DockPanel>
                     </ui:Button>
@@ -286,7 +292,6 @@
                                                         Margin="0,3,0,0"
                                                         Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                                 </StackPanel>
-
 
                                                 <ContentControl 
                                                     Grid.Column="1" 

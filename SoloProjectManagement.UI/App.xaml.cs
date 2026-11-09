@@ -33,7 +33,7 @@ namespace SoloProjectManagement.UI
 
 			pages.Register(() => new DashboardPage(new DashboardViewModel(dashboardService, navigation)));
 			pages.Register(() => new ProjectsPage(new ProjectViewModel(projectService, navigation, dialogService, projectContext)));
-			pages.Register(() => new ProjectOverviewPage(new ProjectOverviewViewModel(projectService, projectContext)));
+			pages.Register(() => new ProjectOverviewPage(new ProjectOverviewViewModel(projectService, taskService, projectContext)));
 
 			var window = new MainWindow { DataContext = new MainViewModel() };
 			dialogService.SetDialogHost(window.RootContentDialog);

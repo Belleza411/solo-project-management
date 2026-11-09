@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Humanizer;
 using SoloProjectManagement.UI.Common;
+using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Tasks;
 using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
@@ -16,7 +17,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 	{
 		[ObservableProperty]
 		private Project? _project;
-		public ObservableCollection<ProjectTask> Tasks { get; } = [];
+		public ObservableCollection<ProjectTaskDto> Tasks { get; } = [];
 
 		[ObservableProperty]
 		private int _remaining;
@@ -39,7 +40,6 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 		[ObservableProperty]
 		private bool _isBusy;
-
 		[ObservableProperty]
 		private string? _errorMessage;
 		public Task OnNavigatedFromAsync() => Task.CompletedTask;
@@ -67,6 +67,10 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 					Project = null;
 					return;
 				}
+
+				var tasks = await taskService.GetAllAsync(project.Id);
+
+				Replace(Tasks, tasks.Items);
 
 				var total = project.Tasks.Count;
 

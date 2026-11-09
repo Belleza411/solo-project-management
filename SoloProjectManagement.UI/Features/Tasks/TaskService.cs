@@ -60,19 +60,38 @@ namespace SoloProjectManagement.UI.Features.Tasks
 			return true;
 		}
 
-		public async Task<PagedResult<ProjectTask>> GetAllAsync(int pageNumber = 1, int pageSize = 10, CancellationToken ct = default)
+		public async Task<PagedResult<ProjectTaskDto>> GetAllAsync(
+			Guid? projectId,
+			int pageNumber = 1,
+			int pageSize = 10,
+			CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
-			var tasks = await db.ProjectTasks
-				.AsNoTracking()
+			var query = db.ProjectTasks.AsNoTracking();
+
+			var totalCount = await query.CountAsync(ct);
+
+			if (projectId.HasValue)
+			{
+				query = query.Where(t => t.ProjectId == projectId.Value);
+			}
+
+			var tasks = await query
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
+				.Select(t => new ProjectTaskDto(
+					Id: t.Id,
+					ProjectId: t.ProjectId,
+					Name: t.Name,
+					Description: t.Description ?? "No description",
+					Status: t.Status,
+					Priority: t.Priority,
+					DueDate: t.DueDate
+					))
 				.ToListAsync(ct);
 
-			var totalCount = tasks.Count;
-
-			return new PagedResult<ProjectTask>(
+			return new PagedResult<ProjectTaskDto>(
 				Items: tasks,
 				PageNumber: pageNumber,
 				PageSize: pageSize,
