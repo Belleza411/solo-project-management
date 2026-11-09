@@ -27,13 +27,13 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		[ObservableProperty]
 		private DateTime? _dueDate;
 
-		public EditProjectViewModel(ProjectCardDto projectToEdit)
+		public EditProjectViewModel(string title, string? description, ProjectCategory category, ProjectStatus status, DateTime? dueDate)
 		{
-			_title = projectToEdit.Title;
-			_description = projectToEdit.Description ?? "";
-			_category = projectToEdit.Category;
-			_status = projectToEdit.Status;
-			_dueDate = projectToEdit.DueDate;
+			_title = title;
+			_description = description ?? "";
+			_category = category;
+			_status = status;
+			_dueDate = dueDate;
 		}
 
 		public IEnumerable<ProjectStatus> Statuses { get; } = Enum.GetValues<ProjectStatus>();

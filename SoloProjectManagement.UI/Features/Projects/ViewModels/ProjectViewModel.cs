@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Projects.ViewModels;
+using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
@@ -17,7 +18,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 		IContentDialogService dialogService,
 		ProjectContext context) : ObservableObject, INavigationAware
 	{
-		public ObservableCollection<ProjectCardDto> Projects { get; } = [];
+		public ObservableCollection<ProjectDto> Projects { get; } = [];
 
 		[ObservableProperty]
 		[NotifyPropertyChangedFor(nameof(ProjectsFooter))]
@@ -28,6 +29,9 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 		[ObservableProperty]
 		private string? _errorMessage;
+
+		[ObservableProperty]
+		private string? latestTask;
 
 		public string ProjectsFooter => $"Showing total of {TotalProjects} projects";
 		public Task OnNavigatedFromAsync() => Task.CompletedTask;
@@ -44,7 +48,8 @@ namespace SoloProjectManagement.UI.Features.Projects
 				var projects = await projectService.GetAllAsync();
 
 				Replace(Projects, projects.Items);
-				TotalProjects = projects.TotalCount;
+				TotalProjects = projects.TotalCount;			
+
 			}
 			catch (Exception ex)
 			{
@@ -86,11 +91,11 @@ namespace SoloProjectManagement.UI.Features.Projects
 		}
 
 		[RelayCommand]
-		private async Task EditProjectAsync(ProjectCardDto project, CancellationToken ct)
+		private async Task EditProjectAsync(ProjectDto project, CancellationToken ct)
 		{
 			if (dialogService is null) return;
 
-			var form = new EditProjectViewModel(project);
+			var form = new EditProjectViewModel(project.Title, project.Description, project.Category, project.Status, project.DueDate);
 			var dialog = new EditProjectDialog(form);
 
 			var result = await dialogService.ShowAsync(dialog, ct);
@@ -116,7 +121,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 
 		[RelayCommand]
-		private async Task DeleteProjectAsync(ProjectCardDto project, CancellationToken ct)
+		private async Task DeleteProjectAsync(ProjectDto project, CancellationToken ct)
 		{
 			var result = await dialogService.ShowSimpleDialogAsync(
 				new SimpleContentDialogCreateOptions
@@ -134,7 +139,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 		}
 
 		[RelayCommand]
-		private void GoToOverview(ProjectCardDto project)
+		private void GoToOverview(ProjectDto project)
 		{
 			context.SelectedProjectId = project.Id;
 			navigationService.Navigate(typeof(ProjectOverviewPage));

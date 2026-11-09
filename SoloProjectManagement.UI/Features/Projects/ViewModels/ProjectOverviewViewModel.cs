@@ -206,28 +206,8 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		{
 			if (dialogService is null) return;
 
-			var currentTask = Tasks
-				.Where(t => t.Status == TaskStatus.InProgress
-							&& t.Priority == TaskPriority.High)
-				.Select(t => t.Name)
-				.FirstOrDefault();
 
-			var progressPercent = project.Tasks.Count == 0
-				? 0
-				: (int)Math.Round(CompletedCount * 100.0 / project.Tasks.Count);
-
-			var dto = new ProjectCardDto(
-				Id: project.Id,
-				Category: project.Category,
-				Title: project.Title,
-				Description: project.Description ?? "",
-				CurrentTask: currentTask ?? "No tasks",
-				Status: project.Status,
-				DueDate: project.DueDate,
-				TasksFraction: $"{CompletedCount} / {project.Tasks.Count} tasks",
-				ProgressPercent: progressPercent);
-
-			var form = new EditProjectViewModel(dto);
+			var form = new EditProjectViewModel(project.Title, project.Description, project.Category, project.Status, project.DueDate);
 			var dialog = new EditProjectDialog(form);
 
 			var result = await dialogService.ShowAsync(dialog, ct);

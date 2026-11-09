@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Dashboard.Dtos;
 using SoloProjectManagement.UI.Features.Projects;
+using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions.Controls;
@@ -13,7 +14,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 		DashboardService dashboardService,
 		INavigationService navigation) : ObservableObject, INavigationAware
 	{
-		public ObservableCollection<ProjectCardDto> RecentProjects { get; } = [];
+		public ObservableCollection<ProjectDto> RecentProjects { get; } = [];
 		public ObservableCollection<RecentTaskDto> RecentTasks { get; } = [];
 		public ObservableCollection<ActivityLogDto> RecentActivities { get; } = [];
 
@@ -26,6 +27,8 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 		private int _totalTasksCount;
 		[ObservableProperty]
 		private int _completedTasksCount;
+		[ObservableProperty]
+		private string? _latestTask;
 		 
 		public static string DateText => DateTime.Today.ToString("dddd, MMMM d, yyyy").ToUpper();
 		public static string Greeting => DateTime.Now.Hour switch
@@ -34,6 +37,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 			< 18 => "Good afternoon",
 			_ => "Good evening"
 		};
+
 		public string TasksFooter => $"Showing {RecentTasks.Count} of {TotalTasksCount} tasks";
 
 		[ObservableProperty]
@@ -56,6 +60,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				var recentTasks = dashboardService.GetRecentTasksAsync();
 				var leftOffTask = dashboardService.GetLeftOffTaskAsync();
 				var recentActivity = dashboardService.GetRecentActivityAsync();
+
 				await Task.WhenAll(
 					overview,
 					recentProjects,
@@ -68,8 +73,6 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				Replace(RecentProjects, recentProjects.Result);
 				Replace(RecentTasks, recentTasks.Result);
 				Replace(RecentActivities, recentActivity.Result);
-
-				LeftOffTask = leftOffTask.Result;
 
 				TotalTasksCount = recentTasks.Result.Count;
 

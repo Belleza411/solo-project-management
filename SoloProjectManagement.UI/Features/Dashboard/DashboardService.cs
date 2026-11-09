@@ -47,51 +47,31 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 			);
 		}
 
-		public async Task<List<ProjectCardDto>> GetRecentProjectsAsync(CancellationToken ct = default)
+		public async Task<List<ProjectDto>> GetRecentProjectsAsync(CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
-			var projects = await db.Projects
+			return await db.Projects
 				.Where(p => p.Status != ProjectStatus.Archived)
 				.OrderByDescending(p => p.UpdatedAt)
 				.Take(3)
-				.Select(p => new
-				{
-					p.Id,
-					p.Category,
-					p.Title,
-					p.Description,
-					p.Status,
-					p.DueDate,
-					TotalTasks = p.Tasks.Count(),
-					CompletedTasks = p.Tasks.Count(t => t.Status == TaskStatus.Completed),
-					p.Tasks
-				})
+				.Select(p => new ProjectDto(
+					Id: p.Id,
+					Category: p.Category,
+					Title: p.Title,
+					Description: p.Description ?? "No description",
+					Status: p.Status,
+					DueDate: p.DueDate,
+					TotalTasks: p.Tasks.Count,
+					CompletedTasks: p.Tasks.Count(t => t.Status == TaskStatus.Completed),
+					MarkedTask: p.Tasks
+						.Where(t => t.Status != TaskStatus.Completed)
+						.OrderByDescending(t => t.UpdatedAt)
+						.ThenBy(t => (int)t.Priority)
+						.Select(t => t.Name)
+						.FirstOrDefault() ?? "No active task")
+				)
 				.ToListAsync(ct);
-
-			return projects.Select(p =>
-			{
-				int progressPercent = p.TotalTasks == 0
-					? 0
-					: (int)Math.Round(p.CompletedTasks * 100.0 / p.TotalTasks);
-
-				string tasksFraction = $"{p.CompletedTasks} / {p.TotalTasks} tasks";
-				var currentTask = p.Tasks.FirstOrDefault(p =>
-					p.Status == TaskStatus.InProgress
-					&& p.Priority == TaskPriority.High);
-
-				return new ProjectCardDto(
-					p.Id,
-					p.Category,
-					p.Title,
-					p.Description ?? "",
-					currentTask?.Name ?? "No task",
-					p.Status,
-					p.DueDate,
-					tasksFraction,
-					progressPercent
-				);
-			}).ToList();
 		}
 
 		public async Task<List<RecentTaskDto>> GetRecentTasksAsync(CancellationToken ct = default)

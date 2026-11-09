@@ -64,55 +64,37 @@ namespace SoloProjectManagement.UI.Features.Projects
 			return true;
 		}
 
-		public async Task<PagedResult<ProjectCardDto>> GetAllAsync(
+		public async Task<PagedResult<ProjectDto>> GetAllAsync(
 			int pageNumber = 1, int pageSize = 6, CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
 			var totalCount = await db.Projects.CountAsync(ct);
 
-			var rows = await db.Projects
+			var items = await db.Projects
 				.AsNoTracking()
 				.OrderBy(p => p.Title)
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
-				.Select(p => new
-				{
-					p.Id,
-					p.Category,
-					p.Title,
-					p.Description,
-					p.Status,
-					p.DueDate,
-					TotalTasks = p.Tasks.Count(),
-					CompletedTasks = p.Tasks.Count(t => t.Status == TaskStatus.Completed),
-					CurrentTask = p.Tasks
-						.Where(t => t.Status == TaskStatus.InProgress
-								 && t.Priority == TaskPriority.High)
-						.Select(t => t.Name)
-						.FirstOrDefault()
-				})
+				.Select(p => new ProjectDto(
+					Id: p.Id,
+					Category: p.Category,
+					Title: p.Title,
+					Description: p.Description ?? "No description",
+					Status: p.Status,
+					DueDate: p.DueDate,
+					TotalTasks: p.Tasks.Count,
+					CompletedTasks: p.Tasks.Count(t => t.Status == TaskStatus.Completed),
+					MarkedTask: p.Tasks
+						.Where(t => t.Status != TaskStatus.Completed) 
+						.OrderByDescending(t => t.UpdatedAt)       
+						.ThenBy(t => (int)t.Priority)                 
+						.Select(t => t.Name)                         
+						.FirstOrDefault() ?? "No active task"
+				))
 				.ToListAsync(ct);
 
-			var items = rows.Select(r =>
-			{
-				var progressPercent = r.TotalTasks == 0
-					? 0
-					: (int)Math.Round(r.CompletedTasks * 100.0 / r.TotalTasks);
-
-				return new ProjectCardDto(
-					r.Id,
-					r.Category,
-					r.Title,
-					r.Description ?? "",
-					r.CurrentTask ?? "No task",
-					r.Status,
-					r.DueDate,
-					$"{r.CompletedTasks} / {r.TotalTasks} tasks",
-					progressPercent);
-			}).ToList();
-
-			return new PagedResult<ProjectCardDto>(items, pageNumber, pageSize, totalCount);
+			return new PagedResult<ProjectDto>(items, pageNumber, pageSize, totalCount);
 		}
 
 		public async Task<Project?> GetByIdAsync(Guid id, CancellationToken ct = default)
