@@ -113,6 +113,8 @@ namespace SoloProjectManagement.UI.Features.Tasks
 			task.DueDate = request.DueDate;
 			task.UpdatedAt = DateTime.UtcNow;
 
+			db.ProjectTasks.Update(task);
+
 			await db.SaveChangesAsync(ct);
 			return true;
 		}

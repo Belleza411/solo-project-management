@@ -9,5 +9,5 @@ namespace SoloProjectManagement.UI.Dtos
 		string Description,
 		TaskStatus Status,
 		TaskPriority Priority,
-		DateTime DueDate);
+		DateTime? DueDate);
 }

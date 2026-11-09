@@ -168,6 +168,39 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			await LoadAsync();
 		}
 
+		[RelayCommand] 
+		private async Task EditTaskAsync(ProjectTaskDto task, CancellationToken ct)
+		{
+			if (dialogService is null) return;
+
+			var form = new EditTaskViewModel(task);
+			var dialog = new EditTaskDialog(form);
+
+			var result = await dialogService.ShowAsync(dialog, ct);
+			if (result != ContentDialogResult.Primary) return;
+
+			if (Project is null) return;
+
+			try
+			{
+				var request = new UpdateTaskRequest(
+					ProjectId: Project.Id,
+					Name: form.Name,
+					Description: form.Description,
+					Status: form.Status,
+					Priority: form.Priority,
+					DueDate: form.DueDate);
+
+				await taskService.UpdateAsync(task.Id, request, ct);
+
+				await LoadAsync();
+			}
+			catch (Exception ex)
+			{
+				ErrorMessage = ex.Message;
+			}
+		}
+
 		[RelayCommand]
 		private async Task EditProjectAsync(Project project, CancellationToken ct)
 		{
