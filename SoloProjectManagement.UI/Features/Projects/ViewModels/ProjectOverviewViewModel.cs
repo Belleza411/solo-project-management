@@ -1,11 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Humanizer;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Tasks;
 using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
+using Wpf.Ui;
 using Wpf.Ui.Abstractions.Controls;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
 namespace SoloProjectManagement.UI.Features.Projects.ViewModels
@@ -13,6 +17,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 	public partial class ProjectOverviewViewModel(
 		ProjectService projectService,
 		TaskService taskService,
+		IContentDialogService dialogService,
 		ProjectContext context) : ObservableObject, INavigationAware
 	{
 		[ObservableProperty]
@@ -111,6 +116,74 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			}
 		}
 
+		[RelayCommand]
+		private async Task EditProjectAsync(Project project, CancellationToken ct)
+		{
+			if (dialogService is null) return;
+
+			var currentTask = Tasks
+				.Where(t => t.Status == TaskStatus.InProgress
+							&& t.Priority == TaskPriority.High)
+				.Select(t => t.Name)
+				.FirstOrDefault();
+
+			var progressPercent = project.Tasks.Count == 0
+				? 0
+				: (int)Math.Round(CompletedCount * 100.0 / project.Tasks.Count);
+
+			var dto = new ProjectCardDto(
+				Id: project.Id,
+				Category: project.Category,
+				Title: project.Title,
+				Description: project.Description ?? "",
+				CurrentTask: currentTask ?? "No tasks",
+				Status: project.Status,
+				DueDate: project.DueDate,
+				TasksFraction: $"{CompletedCount} / {project.Tasks.Count} tasks",
+				ProgressPercent: progressPercent);
+
+			var form = new EditProjectViewModel(dto);
+			var dialog = new EditProjectDialog(form);
+
+			var result = await dialogService.ShowAsync(dialog, ct);
+			if (result != ContentDialogResult.Primary) return;
+
+			try
+			{
+				await projectService.UpdateAsync(
+					project.Id,
+					form.Title,
+					form.Description,
+					form.Category,
+					form.DueDate,
+					form.Status, ct);
+
+				await LoadAsync();
+			}
+			catch (Exception ex)
+			{
+				ErrorMessage = ex.Message;
+			}
+		}
+
+
+		[RelayCommand]
+		private async Task DeleteProjectAsync(Project project, CancellationToken ct)
+		{
+			var result = await dialogService.ShowSimpleDialogAsync(
+				new SimpleContentDialogCreateOptions
+				{
+					Title = "Delete project?",
+					Content = $"\"{project.Title}\" and its tasks will be permanently deleted.",
+					PrimaryButtonText = "Delete",
+					CloseButtonText = "Cancel"
+				}, ct);
+
+			if (result != ContentDialogResult.Primary) return;
+
+			await projectService.DeleteAsync(project.Id, ct);
+			await LoadAsync();
+		}
 		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)
 		{
 			source.Clear();

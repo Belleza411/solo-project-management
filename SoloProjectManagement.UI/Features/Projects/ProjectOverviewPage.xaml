@@ -85,14 +85,14 @@
                                     Icon="{ui:SymbolIcon Edit24}"
                                     Command="{Binding PlacementTarget.Tag.EditProjectCommand,
                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                    CommandParameter="{Binding PlacementTarget.DataContext,
+                                    CommandParameter="{Binding PlacementTarget.Tag.Project,
                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                                 <MenuItem 
                                     Header="Delete"
                                     Icon="{ui:SymbolIcon Delete24}"
                                     Command="{Binding PlacementTarget.Tag.DeleteProjectCommand,
                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                    CommandParameter="{Binding PlacementTarget.DataContext,
+                                    CommandParameter="{Binding PlacementTarget.Tag.Project,
                                         RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
                             </ContextMenu>
                         </ui:DropDownButton.Flyout>
