@@ -2,7 +2,7 @@
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Models;
 
-namespace SoloProjectManagement.UI.Features.Projects
+namespace SoloProjectManagement.UI.Features.Projects.Services
 {
 	public interface IProjectService
 	{

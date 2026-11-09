@@ -1,8 +1,10 @@
 ﻿using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Features.Dashboard;
+using SoloProjectManagement.UI.Features.Dashboard.Services;
 using SoloProjectManagement.UI.Features.Projects;
+using SoloProjectManagement.UI.Features.Projects.Services;
 using SoloProjectManagement.UI.Features.Projects.ViewModels;
-using SoloProjectManagement.UI.Features.Tasks;
+using SoloProjectManagement.UI.Features.Tasks.Services;
 using SoloProjectManagement.UI.Persistence;
 using SoloProjectManagement.UI.Services;
 using SoloProjectManagement.UI.Shell;

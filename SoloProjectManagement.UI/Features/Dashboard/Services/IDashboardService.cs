@@ -1,7 +1,7 @@
 ﻿using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Dashboard.Dtos;
 
-namespace SoloProjectManagement.UI.Features.Dashboard
+namespace SoloProjectManagement.UI.Features.Dashboard.Services
 {
 	public interface IDashboardService
 	{

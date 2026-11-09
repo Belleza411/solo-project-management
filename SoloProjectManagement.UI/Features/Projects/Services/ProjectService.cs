@@ -5,7 +5,7 @@ using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
 using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
-namespace SoloProjectManagement.UI.Features.Projects
+namespace SoloProjectManagement.UI.Features.Projects.Services
 {
 	public class ProjectService(string connectionString) : IProjectService
 	{

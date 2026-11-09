@@ -7,7 +7,7 @@ using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
 using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
-namespace SoloProjectManagement.UI.Features.Dashboard
+namespace SoloProjectManagement.UI.Features.Dashboard.Services
 {
 	public class DashboardService(string connectionString) : IDashboardService
 	{

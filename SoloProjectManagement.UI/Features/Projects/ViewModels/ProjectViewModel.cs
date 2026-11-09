@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
+using SoloProjectManagement.UI.Features.Projects.Services;
 using SoloProjectManagement.UI.Features.Projects.ViewModels;
 using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
