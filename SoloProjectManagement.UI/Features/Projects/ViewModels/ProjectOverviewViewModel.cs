@@ -4,6 +4,7 @@ using Humanizer;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Tasks;
+using SoloProjectManagement.UI.Features.Tasks.ViewModel;
 using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
@@ -117,6 +118,57 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		}
 
 		[RelayCommand]
+		private async Task AddTaskAsync(CancellationToken ct)
+		{
+			if (dialogService is null) return;
+
+			var form = new AddTaskViewModel();
+			var dialog = new AddTaskDialog(form);
+
+			var result = await dialogService.ShowAsync(dialog, ct);
+			if (result != ContentDialogResult.Primary) return;
+
+			if (Project is null) return;
+
+			try
+			{
+				var request = new CreateTaskRequest(
+					ProjectId: Project.Id,
+					Name: form.Name,
+					Description: form.Description,
+					Status: form.Status,
+					Priority: form.Priority,
+					DueDate: form.DueDate);
+
+				await taskService.CreateAsync(request, ct);
+
+				await LoadAsync();
+			}
+			catch (Exception ex)
+			{
+				ErrorMessage = ex.Message;
+			}
+		}
+
+		[RelayCommand]
+		private async Task DeleteTaskAsync(ProjectTaskDto task, CancellationToken ct)
+		{
+			var result = await dialogService.ShowSimpleDialogAsync(
+				new SimpleContentDialogCreateOptions
+				{
+					Title = "Delete project?",
+					Content = $"\"{task.Name}\" and its tasks will be permanently deleted.",
+					PrimaryButtonText = "Delete",
+					CloseButtonText = "Cancel"
+				}, ct);
+
+			if (result != ContentDialogResult.Primary) return;
+
+			await taskService.DeleteAsync(task.Id, ct);
+			await LoadAsync();
+		}
+
+		[RelayCommand]
 		private async Task EditProjectAsync(Project project, CancellationToken ct)
 		{
 			if (dialogService is null) return;
@@ -184,6 +236,9 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			await projectService.DeleteAsync(project.Id, ct);
 			await LoadAsync();
 		}
+
+
+
 		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)
 		{
 			source.Clear();

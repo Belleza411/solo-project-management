@@ -22,15 +22,6 @@ namespace SoloProjectManagement.UI.Features.Tasks
 				DueDate = request.DueDate
 			};
 
-			db.ActivityLogs.Add(new ActivityLog
-			{
-				Name = $"You added task: {request.Name}",
-				EntityType = ActivityEntityType.Task,
-				ActionType = ActivityActionType.Created,
-				ProjectId = task.ProjectId,
-				ProjectTaskId = task.Id
-			});
-
 			db.ProjectTasks.Add(task);
 			await db.SaveChangesAsync(ct);
 

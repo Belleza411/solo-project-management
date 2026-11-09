@@ -9,7 +9,7 @@
 		public string? Description { get; set; }
 		public TaskStatus Status { get; set; } = TaskStatus.Todo;
 		public TaskPriority Priority { get; set; } = TaskPriority.Low;
-		public DateTime DueDate { get; set; }
+		public DateTime? DueDate { get; set; }
 		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 		public DateTime? UpdatedAt { get; set; }
 		public ICollection<ActivityLog> ActivityLogs { get; set; } = [];

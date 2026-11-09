@@ -53,7 +53,7 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
                     <Button 
                         Content="+  Add task"
-                        Command="{Binding NewTaskCommand}"
+                        Command="{Binding AddTaskCommand}"
                         Margin="0,0,16,0"/>
 
                     <ui:DropDownButton
