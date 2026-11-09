@@ -71,28 +71,15 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 			var totalCount = await db.Projects.CountAsync(ct);
 
-			var items = await db.Projects
+			var projects = await db.Projects
 				.AsNoTracking()
+				.Include(p => p.Tasks)
 				.OrderBy(p => p.Title)
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
-				.Select(p => new ProjectDto(
-					Id: p.Id,
-					Category: p.Category,
-					Title: p.Title,
-					Description: p.Description ?? "No description",
-					Status: p.Status,
-					DueDate: p.DueDate,
-					TotalTasks: p.Tasks.Count,
-					CompletedTasks: p.Tasks.Count(t => t.Status == TaskStatus.Completed),
-					MarkedTask: p.Tasks
-						.Where(t => t.Status != TaskStatus.Completed) 
-						.OrderByDescending(t => t.UpdatedAt)       
-						.ThenBy(t => (int)t.Priority)                 
-						.Select(t => t.Name)                         
-						.FirstOrDefault() ?? "No active task"
-				))
 				.ToListAsync(ct);
+
+			var items = projects.Select(p => p.ToDto()).ToList();
 
 			return new PagedResult<ProjectDto>(items, pageNumber, pageSize, totalCount);
 		}
