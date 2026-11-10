@@ -9,6 +9,7 @@ using SoloProjectManagement.UI.Features.Tasks.Services;
 using SoloProjectManagement.UI.Features.Tasks.ViewModel;
 using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
@@ -42,7 +43,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		[ObservableProperty]
 		private string _progressText = "";
 		[ObservableProperty]
-		public string _dueDateText = "";
+		private string _dueDateText = "";
 		[ObservableProperty]
 		private string _updatedText = "";
 
@@ -51,10 +52,55 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		[ObservableProperty]
 		private string? _errorMessage;
 
+		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(TotalPages))]
+		[NotifyPropertyChangedFor(nameof(HasPages))]
+		[NotifyPropertyChangedFor(nameof(PageText))]
+		[NotifyPropertyChangedFor(nameof(RangeText))]
+		[NotifyPropertyChangedFor(nameof(CanGoNext))]
+		[NotifyCanExecuteChangedFor(nameof(NextPageCommand))]
+		private int _totalCount;
+
+		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(PageText))]
+		[NotifyPropertyChangedFor(nameof(RangeText))]
+		[NotifyPropertyChangedFor(nameof(CanGoPrevious))]
+		[NotifyPropertyChangedFor(nameof(CanGoNext))]
+		[NotifyCanExecuteChangedFor(nameof(PreviousPageCommand))]
+		[NotifyCanExecuteChangedFor(nameof(NextPageCommand))]
+		private int _currentPage = 1;
+
+		[ObservableProperty]
+		private int _pageSize = 10;
+
+		public int TotalPages => Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+		public bool HasPages => TotalPages > 1;
+		public bool CanGoPrevious => CurrentPage > 1 && !IsBusy;
+		public bool CanGoNext => CurrentPage < TotalPages && !IsBusy;
+		public string PageText => $"Page {CurrentPage} of {TotalPages}";
+		public string RangeText
+		{
+			get
+			{
+				if (TotalCount == 0) return "";
+				var first = (CurrentPage - 1) * PageSize + 1;
+				var last = Math.Min(CurrentPage * PageSize, TotalCount);
+				return $"{first}–{last} of {TotalCount}";
+			}
+		}
+
 		public IEnumerable<TaskStatus> Statuses { get; } = Enum.GetValues<TaskStatus>();
 
 		public Task OnNavigatedFromAsync() => Task.CompletedTask;
 		public Task OnNavigatedToAsync() => LoadAsync();
+
+		partial void OnIsBusyChanged(bool value)
+		{
+			OnPropertyChanged(nameof(CanGoPrevious));
+			OnPropertyChanged(nameof(CanGoNext));
+			PreviousPageCommand.NotifyCanExecuteChanged();
+			NextPageCommand.NotifyCanExecuteChanged();
+		}
 
 		private async Task LoadAsync()
 		{
@@ -79,42 +125,72 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 					return;
 				}
 
-				var tasks = await taskService.GetAllAsync(project.Id);
-
-				Replace(Tasks, tasks.Items);
-
-				var total = project.Tasks.Count;
-
 				Project = project;
-				CompletedCount = project.Tasks.Count(t => t.Status == TaskStatus.Completed);
-				InProgressCount = project.Tasks.Count(t => t.Status == TaskStatus.InProgress);
-				TodoCount = project.Tasks.Count(t => t.Status == TaskStatus.Todo);
-				Remaining = total - CompletedCount;
+				ApplyProjectStats(project);
 
-				var percent = total == 0
-					? 0
-					: Math.Round(CompletedCount * 100.0 / total);
-
-				PercentText = $"{percent:0}%";
-				ProgressPercent = percent;
-
-				ProgressText = total == 0 
-					? "No tasks yet"
-					: $"{CompletedCount} of {total} tasks complete · {Remaining} remaining";
-
-				var latest = project.Tasks
-					.Select(t => t.UpdatedAt ?? t.CreatedAt)
-					.Append(project.UpdatedAt ?? project.CreatedAt)
-					.Max();
-
-				DueDateText = project.DueDate?.ToString("MMM d") ?? "N/A";
-
-				UpdatedText = $"Updated {latest.Humanize()}";
+				await LoadTaskAsync(project.Id, CurrentPage);
 
 			}
 			catch (Exception ex)
 			{
 				ErrorMessage = ex.Message;
+			}
+			finally
+			{
+				IsBusy = false;
+			}
+		}
+
+	
+		private async Task LoadTaskAsync(Guid projectId, int page)
+		{
+			page = Math.Max(1, page);
+
+			var result = await taskService.GetAllAsync(projectId, page, PageSize);
+
+			var lastPage = Math.Max(1, (int)Math.Ceiling(result.TotalCount / (double)PageSize));
+
+			if(page > lastPage)
+			{
+				page = lastPage;
+				result = await taskService.GetAllAsync(projectId, page, PageSize);
+			}
+
+			Replace(Tasks, result.Items);
+
+			TotalCount = result.TotalCount;
+			CurrentPage = page;
+		}
+
+		private async Task RunAsync(Func<Task> action)
+		{
+			IsBusy = true;
+			try
+			{
+				await action();
+			}
+			catch (Exception ex) { 
+			}
+			finally
+			{
+				IsBusy = false;
+			}
+		}
+
+		private async Task ChangePageAsync(int page)
+		{
+			if (Project is null) return;
+
+			IsBusy = true;
+			ErrorMessage = null;
+			try
+			{
+				await LoadTaskAsync(Project.Id, page);   
+			}
+			catch (Exception ex)
+			{
+				Trace.TraceError(ex.ToString());
+				ErrorMessage = "Could not load that page. Please try again.";
 			}
 			finally
 			{
@@ -278,6 +354,41 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			{
 				ErrorMessage = ex.Message;
 			}
+		}
+
+		[RelayCommand(CanExecute = nameof(CanGoPrevious))]
+		private Task PreviousPageAsync() => ChangePageAsync(CurrentPage - 1);
+
+		[RelayCommand(CanExecute = nameof(CanGoNext))]
+		private Task NextPageAsync() => ChangePageAsync(CurrentPage + 1);
+
+		private void ApplyProjectStats(Project project)
+		{
+			var total = project.Tasks.Count;
+			CompletedCount = project.Tasks.Count(t => t.Status == TaskStatus.Completed);
+			InProgressCount = project.Tasks.Count(t => t.Status == TaskStatus.InProgress);
+			TodoCount = project.Tasks.Count(t => t.Status == TaskStatus.Todo);
+			Remaining = total - CompletedCount;
+
+			var percent = total == 0
+				? 0
+				: Math.Round(CompletedCount * 100.0 / total);
+
+			PercentText = $"{percent:0}%";
+			ProgressPercent = percent;
+
+			ProgressText = total == 0
+				? "No tasks yet"
+				: $"{CompletedCount} of {total} tasks complete · {Remaining} remaining";
+
+			var latest = project.Tasks
+				.Select(t => t.UpdatedAt ?? t.CreatedAt)
+				.Append(project.UpdatedAt ?? project.CreatedAt)
+				.Max();
+
+			DueDateText = project.DueDate?.ToString("MMM d") ?? "N/A";
+
+			UpdatedText = $"Updated {latest.Humanize()}";
 		}
 
 		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)
