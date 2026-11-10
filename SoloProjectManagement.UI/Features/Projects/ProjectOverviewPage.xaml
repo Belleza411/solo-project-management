@@ -51,7 +51,8 @@
                 </Grid>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
-                    <Button 
+                    <ui:Button 
+                        Appearance="Primary"
                         Content="+  Add task"
                         Command="{Binding AddTaskCommand}"
                         Margin="0,0,16,0"/>
@@ -192,7 +193,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="180" />
                                 <ColumnDefinition Width="110" />
                                 <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="50" />
@@ -215,7 +216,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="180"/>
                                             <ColumnDefinition Width="110"/>
                                             <ColumnDefinition Width="100"/>
                                             <ColumnDefinition Width="50" />
@@ -223,20 +224,41 @@
 
                                         <ui:TextBlock 
                                             Grid.Column="0"
+                                            VerticalAlignment="Center"
                                             Text="{Binding Name}" 
                                             Style="{StaticResource TaskTitle}" />
 
-                                        <ComboBox 
+                                        <ui:DropDownButton
+                                            Content="{Binding Status, Converter={StaticResource SpacedEnumConverter}}"
+                                            Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Page}}"
                                             Grid.Column="1"
-                                            ItemsSource="{Binding Statuses}"
-                                            SelectedItem="{Binding Status}">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <ui:TextBlock Text="{Binding Converter={StaticResource SpacedEnumConverter}}"/>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-                                        
+                                            Width="130"
+                                            HorizontalAlignment="Left">
+                                            <ui:DropDownButton.Flyout>
+                                                 <ContextMenu ItemsSource="{Binding PlacementTarget.Tag.Statuses,
+                                                        RelativeSource={RelativeSource Self}}">
+                                                    <ContextMenu.ItemContainerStyle>
+                                                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                                            <Setter Property="Header"
+                                                                Value="{Binding Converter={StaticResource SpacedEnumConverter}}"/>
+                                                            <Setter Property="Command"
+                                                                Value="{Binding PlacementTarget.Tag.ChangeStatusCommand,
+                                                                        RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                                            <Setter Property="CommandParameter">
+                                                                <Setter.Value>
+                                                                    <MultiBinding Converter="{StaticResource StatusChangeConverter}">
+                                                                        <Binding Path="PlacementTarget.DataContext"
+                                                                            RelativeSource="{RelativeSource AncestorType=ContextMenu}"/>
+                                                                        <Binding/>
+                                                                    </MultiBinding>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </ContextMenu.ItemContainerStyle>
+                                                </ContextMenu>
+                                            </ui:DropDownButton.Flyout>
+                                        </ui:DropDownButton>
+
                                         <StackPanel 
                                             Grid.Column="2" 
                                             Orientation="Horizontal" 
@@ -251,7 +273,7 @@
 
                                         <TextBlock 
                                             Grid.Column="3" 
-                                            Text="{Binding DueDate, StringFormat={}{0:MMM dd}}" 
+                                            Text="{Binding DueDateText}" 
                                             Style="{StaticResource DueText}"/>
 
                                         <ui:DropDownButton
@@ -260,17 +282,13 @@
                                             BorderBrush="Transparent"
                                             Background="Transparent"
                                             Appearance="Transparent"
-                                            Padding="6,2"
-                                            Icon="{ui:SymbolIcon MoreHorizontal48}"
+                                            Icon="{ui:SymbolIcon MoreHorizontal24}"
                                             Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Page}}">
                                             <ui:DropDownButton.Resources>
                                                 <Style TargetType="ui:SymbolIcon">
                                                     <Style.Triggers>
                                                         <Trigger Property="Symbol" Value="ChevronDown24">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </Trigger>
-                                                        <Trigger Property="Symbol" Value="MoreHorizontal48">
-                                                            <Setter Property="FontSize" Value="20"/>
                                                         </Trigger>
                                                     </Style.Triggers>
                                                 </Style>

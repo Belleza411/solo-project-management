@@ -10,9 +10,11 @@
                 <ui:ThemesDictionary Theme="Light" />
                 <ui:ControlsDictionary />
                 <ResourceDictionary Source="/Styles/Badges.xaml" />
+                <ResourceDictionary Source="/Styles/TasksTable.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <conv:SpacedEnumConverter x:Key="SpacedEnumConverter"/>
+            <conv:StatusChangeConverter x:Key="StatusChangeConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

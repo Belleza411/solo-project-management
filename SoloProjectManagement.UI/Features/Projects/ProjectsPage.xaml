@@ -64,8 +64,9 @@
                         Margin="0,8"/>
 
                 <ui:Button
+                        Appearance="Primary"
                         Grid.Column="1"
-                        Content="Add Project"
+                        Content="+ Add Project"
                         Command="{Binding AddProjectCommand}"/>
             </Grid>
             <ui:TextBlock

@@ -14,5 +14,6 @@ namespace SoloProjectManagement.UI.Dtos
 	{
 		public IEnumerable<TaskStatus> Statuses { get; } = Enum.GetValues<TaskStatus>();
 		public IEnumerable<TaskPriority> Priorities { get; } = Enum.GetValues<TaskPriority>();
+		public string DueDateText { get; } = DueDate?.ToString("MMM d") ?? "N/A";
 	}
 }

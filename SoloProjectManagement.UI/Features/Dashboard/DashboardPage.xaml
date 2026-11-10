@@ -301,7 +301,7 @@
 
                                                 <TextBlock 
                                                     Grid.Column="3" 
-                                                    Text="{Binding DueDate, StringFormat={}{0:MMM dd}}" 
+                                                    Text="{Binding DueDateText}" 
                                                     Style="{StaticResource DueText}"/>
                                             </Grid>
                                         </Border>

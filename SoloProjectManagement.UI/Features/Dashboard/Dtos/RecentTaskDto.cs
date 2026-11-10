@@ -8,5 +8,8 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Dtos
 		string ProjectTitle,
 		TaskStatus Status,
 		TaskPriority Priority,
-		DateTime? DueDate);
+		DateTime? DueDate)
+	{
+		public string DueDateText { get; } = DueDate?.ToString("MMM d") ?? "N/A";
+	}
 }

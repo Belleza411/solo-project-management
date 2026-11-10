@@ -2,7 +2,7 @@
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Models;
 
-namespace SoloProjectManagement.UI.Features.Tasks
+namespace SoloProjectManagement.UI.Features.Tasks.Services
 {
 	public interface ITaskService
 	{

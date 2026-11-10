@@ -50,6 +50,9 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		private bool _isBusy;
 		[ObservableProperty]
 		private string? _errorMessage;
+
+		public IEnumerable<TaskStatus> Statuses { get; } = Enum.GetValues<TaskStatus>();
+
 		public Task OnNavigatedFromAsync() => Task.CompletedTask;
 		public Task OnNavigatedToAsync() => LoadAsync();
 
@@ -233,7 +236,6 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			}
 		}
 
-
 		[RelayCommand]
 		private async Task DeleteProjectAsync(Project project, CancellationToken ct)
 		{
@@ -252,7 +254,31 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			await LoadAsync();
 		}
 
+		[RelayCommand]
+		private async Task ChangeStatusAsync(StatusChange change, CancellationToken ct)
+		{
+			if (Project is null || change is null || change.Task.Status == change.Status)
+				return;
 
+			try
+			{
+				var request = new UpdateTaskRequest(
+					ProjectId: Project.Id,
+					Name: change.Task.Name,
+					Description: change.Task.Description,
+					Status: change.Status,                       
+					Priority: change.Task.Priority,
+					DueDate: change.Task.DueDate);
+
+				await taskService.UpdateAsync(change.Task.Id, request, ct);
+
+				await LoadAsync();
+			}
+			catch (Exception ex)
+			{
+				ErrorMessage = ex.Message;
+			}
+		}
 
 		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)
 		{
