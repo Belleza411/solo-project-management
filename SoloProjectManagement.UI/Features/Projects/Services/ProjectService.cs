@@ -98,7 +98,7 @@ namespace SoloProjectManagement.UI.Features.Projects.Services
 
 			var items = projects.Select(p => p.ToDto()).ToList();
 
-			var totalCount = await db.Projects.CountAsync(ct);
+			var totalCount = await query.CountAsync(ct);
 
 			return new PagedResult<ProjectDto>(items, pageNumber, pageSize, totalCount);
 		}
