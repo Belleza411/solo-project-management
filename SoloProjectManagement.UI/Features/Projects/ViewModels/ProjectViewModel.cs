@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Humanizer;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
+using SoloProjectManagement.UI.Features.Projects.Dtos;
 using SoloProjectManagement.UI.Features.Projects.Services;
 using SoloProjectManagement.UI.Features.Projects.ViewModels;
 using SoloProjectManagement.UI.Models;
@@ -20,6 +22,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 		ProjectContext context) : ObservableObject, INavigationAware
 	{
 		public ObservableCollection<ProjectDto> Projects { get; } = [];
+		private static readonly StatusFilterOption AllStatuses = new("All statuses", null);
 
 		[ObservableProperty]
 		[NotifyPropertyChangedFor(nameof(ProjectsFooter))]
@@ -32,36 +35,87 @@ namespace SoloProjectManagement.UI.Features.Projects
 		private string? _errorMessage;
 
 		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(EmptyMessage))]
+		private string _searchText = "";
+
+		[ObservableProperty]
 		private string? latestTask;
 
+		[ObservableProperty]
+		private bool _hasNoProjects;
+
+		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasActiveFilter))]
+		[NotifyPropertyChangedFor(nameof(EmptyMessage))]
+		[NotifyCanExecuteChangedFor(nameof(ClearFiltersCommand))]
+		private StatusFilterOption _selectedStatusFilter = AllStatuses;
+
+		private CancellationTokenSource? _searchCts;
+		public bool HasActiveFilter => !string.IsNullOrWhiteSpace(SearchText) || SelectedStatusFilter.Value is not null;
 		public string ProjectsFooter => $"Showing total of {TotalProjects} projects";
+		public string EmptyMessage => string.IsNullOrWhiteSpace(SearchText)
+			? "No projects yet. Create one to get started."
+			: $"No projects match \"{SearchText.Trim()}\".";
+
+		public IReadOnlyList<StatusFilterOption> StatusFilters { get; } =
+			[AllStatuses, .. Enum.GetValues<ProjectStatus>().Select(s => new StatusFilterOption(s.Humanize(), s))];
 		public Task OnNavigatedFromAsync() => Task.CompletedTask;
 
 		public Task OnNavigatedToAsync() => LoadAsync();
 
-		private async Task LoadAsync()
+		private async Task LoadAsync(CancellationToken ct = default)
 		{
 			IsBusy = true;
 			ErrorMessage = null;
 
 			try
 			{
-				var projects = await projectService.GetAllAsync();
+				var search = string.IsNullOrEmpty(SearchText) ? null : SearchText.Trim();
+				var status = SelectedStatusFilter.Value;
+
+				var projects = await projectService.GetAllAsync(new ProjectsFilterRequest(search, status), ct: ct);
+
+				ct.ThrowIfCancellationRequested();
 
 				Replace(Projects, projects.Items);
-				TotalProjects = projects.TotalCount;			
+				TotalProjects = projects.TotalCount;
+				HasNoProjects = projects.TotalCount == 0;
 
+			}
+			catch (OperationCanceledException)
+			{
+				throw;
 			}
 			catch (Exception ex)
 			{
 				ErrorMessage = ex.Message;
-				System.Diagnostics.Debug.WriteLine(ex.Message);
-			}
+			}			
 			finally
 			{
 				IsBusy = false;
 			}
 		}
+
+		partial void OnSearchTextChanged(string value) => _ = RefreshAsync(TimeSpan.FromMilliseconds(300));
+		partial void OnSelectedStatusFilterChanged(StatusFilterOption value) => _ = RefreshAsync(TimeSpan.Zero);
+
+		private async Task RefreshAsync(TimeSpan delay)
+		{
+			_searchCts?.Cancel();
+			var cts = _searchCts = new CancellationTokenSource();
+
+			try
+			{
+				if (delay > TimeSpan.Zero)
+					await Task.Delay(delay, cts.Token);
+
+				await LoadAsync(cts.Token);
+			}
+			catch (OperationCanceledException)
+			{
+			}
+		}
+
 
 		[RelayCommand]
 		private async Task AddProjectAsync(CancellationToken ct)
@@ -144,6 +198,13 @@ namespace SoloProjectManagement.UI.Features.Projects
 		{
 			context.SelectedProjectId = project.Id;
 			navigationService.Navigate(typeof(ProjectOverviewPage));
+		}
+
+		[RelayCommand]
+		private void ClearFilters()
+		{
+			SearchText = "";
+			SelectedStatusFilter = AllStatuses;
 		}
 
 		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)

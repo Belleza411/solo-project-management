@@ -3,6 +3,6 @@
 namespace SoloProjectManagement.UI.Features.Projects.Dtos
 {
 	public sealed record ProjectsFilterRequest(
-		string SearchQuery,
+		string? SearchQuery,
 		ProjectStatus? Status);
 }

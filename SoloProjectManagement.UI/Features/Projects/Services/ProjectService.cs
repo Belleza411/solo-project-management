@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
+using SoloProjectManagement.UI.Features.Projects.Dtos;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
 using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
@@ -65,14 +66,30 @@ namespace SoloProjectManagement.UI.Features.Projects.Services
 		}
 
 		public async Task<PagedResult<ProjectDto>> GetAllAsync(
-			int pageNumber = 1, int pageSize = 6, CancellationToken ct = default)
+			ProjectsFilterRequest? request,
+			int pageNumber = 1,
+			int pageSize = 6,
+			CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
-			var totalCount = await db.Projects.CountAsync(ct);
+			var query = db.Projects.AsNoTracking();
 
-			var projects = await db.Projects
-				.AsNoTracking()
+			if (request != null)
+			{
+				if (!string.IsNullOrEmpty(request.SearchQuery))
+				{
+					string search = request.SearchQuery.Trim();
+					query = query.Where(p => p.Title.Contains(search));
+				}
+
+				if (request.Status.HasValue && request.Status is ProjectStatus status)
+				{
+					query = query.Where(p => p.Status == status);
+				}
+			}
+
+			var projects = await query
 				.Include(p => p.Tasks)
 				.OrderBy(p => p.Title)
 				.Skip((pageNumber - 1) * pageSize)
@@ -80,6 +97,8 @@ namespace SoloProjectManagement.UI.Features.Projects.Services
 				.ToListAsync(ct);
 
 			var items = projects.Select(p => p.ToDto()).ToList();
+
+			var totalCount = await db.Projects.CountAsync(ct);
 
 			return new PagedResult<ProjectDto>(items, pageNumber, pageSize, totalCount);
 		}
