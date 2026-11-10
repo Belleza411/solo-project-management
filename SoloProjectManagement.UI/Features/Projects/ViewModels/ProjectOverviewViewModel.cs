@@ -162,21 +162,6 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			CurrentPage = page;
 		}
 
-		private async Task RunAsync(Func<Task> action)
-		{
-			IsBusy = true;
-			try
-			{
-				await action();
-			}
-			catch (Exception ex) { 
-			}
-			finally
-			{
-				IsBusy = false;
-			}
-		}
-
 		private async Task ChangePageAsync(int page)
 		{
 			if (Project is null) return;
@@ -364,7 +349,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 		private void ApplyProjectStats(Project project)
 		{
-			var total = project.Tasks.Count;
+			var total = TotalCount;
 			CompletedCount = project.Tasks.Count(t => t.Status == TaskStatus.Completed);
 			InProgressCount = project.Tasks.Count(t => t.Status == TaskStatus.InProgress);
 			TodoCount = project.Tasks.Count(t => t.Status == TaskStatus.Todo);

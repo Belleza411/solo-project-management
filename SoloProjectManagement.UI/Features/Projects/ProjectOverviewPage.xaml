@@ -210,7 +210,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border 
-                                    Padding="20,14"
+                                    Padding="16,12"
                                     BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
                                     BorderThickness="0,0,0,1">
                                     <Grid>
@@ -337,7 +337,8 @@
                 <StackPanel 
                     Grid.Column="1" 
                     Orientation="Horizontal" 
-                    HorizontalAlignment="Right">
+                    HorizontalAlignment="Right"
+                    Visibility="{Binding HasPages, Converter={StaticResource BoolToVis}}">
                     <ui:Button 
                         Appearance="Primary" 
                         ToolTip="Previous page"

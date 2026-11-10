@@ -59,9 +59,7 @@ namespace SoloProjectManagement.UI.Features.Tasks.Services
 		{
 			using var db = new ProjectDbContext(connectionString);
 
-			var query = db.ProjectTasks.AsNoTracking();
-
-			var totalCount = await query.CountAsync(ct);
+			var query = db.ProjectTasks.AsNoTracking();	
 
 			if (projectId.HasValue)
 			{
@@ -81,6 +79,8 @@ namespace SoloProjectManagement.UI.Features.Tasks.Services
 					DueDate: t.DueDate
 					))
 				.ToListAsync(ct);
+
+			var totalCount = await query.CountAsync(ct);
 
 			return new PagedResult<ProjectTaskDto>(
 				Items: tasks,

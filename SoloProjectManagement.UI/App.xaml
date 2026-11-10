@@ -15,6 +15,7 @@
 
             <conv:SpacedEnumConverter x:Key="SpacedEnumConverter"/>
             <conv:StatusChangeConverter x:Key="StatusChangeConverter"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
