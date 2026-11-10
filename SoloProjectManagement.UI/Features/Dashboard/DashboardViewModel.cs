@@ -59,21 +59,16 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				var overview = dashboardService.GetOverviewAsync();
 				var recentProjects = dashboardService.GetRecentProjectsAsync();
 				var recentTasks = dashboardService.GetRecentTasksAsync();
-				var leftOffTask = dashboardService.GetLeftOffTaskAsync();
-				var recentActivity = dashboardService.GetRecentActivityAsync();
 
 				await Task.WhenAll(
 					overview,
 					recentProjects,
-					recentTasks,
-					leftOffTask,
-					recentActivity);
+					recentTasks);
 
 				Overview = overview.Result;
 
 				Replace(RecentProjects, recentProjects.Result);
 				Replace(RecentTasks, recentTasks.Result);
-				Replace(RecentActivities, recentActivity.Result);
 
 				TotalTasksCount = recentTasks.Result.Count;
 

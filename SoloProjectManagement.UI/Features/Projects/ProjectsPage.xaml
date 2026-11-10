@@ -149,7 +149,7 @@
                                             Margin="0,0,0,6"
                                             TextWrapping="Wrap"/>
 
-                                    <ui:TextBlock Text="{Binding Description}" 
+                                    <ui:TextBlock Text="{Binding DescriptionText}" 
                                             FontSize="14" 
                                             Foreground="#666666" 
                                             TextWrapping="Wrap"/>

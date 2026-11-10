@@ -21,5 +21,8 @@ namespace SoloProjectManagement.UI.Dtos
 		public string TasksFraction { get; } = TotalTasks == 0
 			? "No tasks yet"
 			: $"{CompletedTasks} of {TotalTasks} tasks complete · {TotalTasks - CompletedTasks} remaining";
+		public string DescriptionText { get; } = string.IsNullOrWhiteSpace(Description)
+			? "No description"
+			: Description;
 	}
 }

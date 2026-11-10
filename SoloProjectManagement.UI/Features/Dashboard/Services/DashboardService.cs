@@ -83,49 +83,6 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 			   .ToListAsync(ct);
 		}
 
-		public async Task<LeftOffTaskDto?> GetLeftOffTaskAsync(CancellationToken ct = default)
-		{
-			using var db = new ProjectDbContext(connectionString);
-
-			var leftOffTask = await db.ProjectTasks
-			   .AsNoTracking()
-			   .Select(t => new
-			   {			   
-				   TaskName = t.Name,
-				   t.Status,
-				   ProjectTitle = t.Project != null ? t.Project.Title : "No Project",
-				   LastActivity = t.ActivityLogs.Max(a => (DateTime?)a.CreatedAt)
-			   })
-			   .Where(x => x.LastActivity != null && x.Status != TaskStatus.Completed)
-			   .OrderByDescending(x => x.LastActivity)
-			   .FirstOrDefaultAsync(ct);
-
-			return new LeftOffTaskDto(
-				Name: leftOffTask?.TaskName ?? "No task",
-				ProjectTitle: leftOffTask?.ProjectTitle ?? "No project"
-			);
-		}
-
-		public async Task<List<ActivityLogDto>> GetRecentActivityAsync(CancellationToken ct = default)
-		{
-			using var db = new ProjectDbContext(connectionString);
-
-			return await db.ActivityLogs
-				.AsNoTracking()
-				.OrderByDescending(a => a.CreatedAt)
-				.Take(5)
-				.Join(
-					db.Projects,
-					log => log.ProjectId,
-					project => project.Id,
-					(log, project) => new ActivityLogDto(
-						log.Name,
-						project.Title,
-						log.CreatedAt.Humanize())
-				)
-				.ToListAsync(ct);
-		}
-
 		private static (DateTime start, DateTime end) GetThisWeekRange()
 		{
 			var today = DateTime.Today;

@@ -36,15 +36,6 @@ namespace SoloProjectManagement.UI.Features.Tasks.Services
 
 			if (task is null) return false;
 
-			db.ActivityLogs.Add(new ActivityLog
-			{
-				Name = $"You deleted task: {task.Name}",
-				EntityType = ActivityEntityType.Task,
-				ActionType = ActivityActionType.Deleted ,
-				ProjectId = task.ProjectId,
-				ProjectTaskId = task.Id
-			});
-
 			db.ProjectTasks.Remove(task);
 			await db.SaveChangesAsync(ct);
 

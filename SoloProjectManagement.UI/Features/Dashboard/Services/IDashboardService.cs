@@ -8,7 +8,5 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 		Task<DashboardOverviewDto> GetOverviewAsync(CancellationToken ct = default);
 		Task<List<ProjectDto>> GetRecentProjectsAsync(CancellationToken ct = default);
 		Task<List<RecentTaskDto>> GetRecentTasksAsync(CancellationToken ct = default);
-		Task<LeftOffTaskDto?> GetLeftOffTaskAsync(CancellationToken ct = default);
-		Task<List<ActivityLogDto>> GetRecentActivityAsync(CancellationToken ct = default);
 	}
 }
