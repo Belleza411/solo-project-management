@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Dashboard.Dtos;
@@ -9,8 +8,9 @@ using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
 namespace SoloProjectManagement.UI.Features.Dashboard.Services
 {
-	public class DashboardService(string connectionString) : IDashboardService
+	public class DashboardService(string connectionString, TimeProvider? clock = null) : IDashboardService
 	{
+		private readonly TimeProvider _clock = clock ?? TimeProvider.System;
 		public async Task<DashboardOverviewDto> GetOverviewAsync(CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
@@ -24,8 +24,8 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 				})
 				.FirstOrDefaultAsync(ct) ?? new { Total = 0, Active = 0 };
 
-			var (thisWeekStart, thisWeekEnd) = GetThisWeekRange();
-			var (lastWeekStart, lastWeekEnd) = GetLastWeekRange();
+			var (thisWeekStartUtc, nextWeekStartUtc, lastWeekStartUtc) = GetWeekBoundsUtc(_clock);
+			var today = _clock.GetLocalNow().Date;  
 
 			var taskMetrics = await db.ProjectTasks
 			   .GroupBy(_ => 1)
@@ -33,10 +33,16 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 			   {
 				   Total = g.Count(),
 				   InProgress = g.Count(t => t.Status == TaskStatus.InProgress),
-				   CompletedThisWeek = g.Count(t => t.Status == TaskStatus.Completed && t.CreatedAt >= thisWeekStart && t.CreatedAt < thisWeekEnd),
-				   CompletedLastWeek = g.Count(t => t.Status == TaskStatus.Completed && t.CreatedAt >= lastWeekStart && t.CreatedAt < lastWeekEnd),
-				   Overdue = g.Count(t => t.Status == TaskStatus.Overdue),
-				   HighPriorityOverdue = g.Count(t => t.Status == TaskStatus.Overdue && t.Priority == TaskPriority.High)
+				   CompletedThisWeek = g.Count(t => t.Status == TaskStatus.Completed
+										  && t.UpdatedAt >= thisWeekStartUtc && t.UpdatedAt < nextWeekStartUtc),
+				   CompletedLastWeek = g.Count(t => 
+						t.Status == TaskStatus.Completed
+						&& t.UpdatedAt >= lastWeekStartUtc && t.UpdatedAt < thisWeekStartUtc),
+				   Overdue = g.Count(t =>
+						t.Status == TaskStatus.Overdue ||
+						(t.Status != TaskStatus.Completed && t.Status != TaskStatus.Overdue && t.DueDate < today)),
+				   HighPriorityOverdue = g.Count(t => t.Status != TaskStatus.Completed
+					   && t.DueDate < today && t.Priority == TaskPriority.High)
 			   })
 			   .FirstOrDefaultAsync(ct) ?? new { Total = 0, InProgress = 0, CompletedThisWeek = 0, CompletedLastWeek = 0, Overdue = 0, HighPriorityOverdue = 0 };
 
@@ -56,7 +62,8 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 				.AsNoTracking()
 				.Include(p => p.Tasks)
 				.Where(p => p.Status != ProjectStatus.Archived)
-				.OrderByDescending(p => p.UpdatedAt)
+				.OrderByDescending(p => p.UpdatedAt ?? p.CreatedAt)
+				.ThenByDescending(p => p.Id)
 				.Take(3)
 				.ToListAsync(ct);
 
@@ -69,10 +76,12 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 
 			return await db.ProjectTasks
 			   .AsNoTracking()
-			   .Include(t => t.Project)
 			   .Where(t => t.Status != TaskStatus.Completed)
-			   .OrderBy(t => t.Priority)
+			   .OrderBy(t => t.Priority == TaskPriority.High 
+					? 0
+					: t.Priority == TaskPriority.Medium ? 1 : 2)
 			   .ThenBy(t => t.DueDate)
+			   .ThenBy(t => t.Id)
 			   .Take(5)
 			   .Select(t => new RecentTaskDto(
 				   Name: t.Name,
@@ -83,28 +92,17 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 			   .ToListAsync(ct);
 		}
 
-		private static (DateTime start, DateTime end) GetThisWeekRange()
+		internal static (DateTime ThisWeekStartUtc, DateTime NextWeekStartUtc, DateTime LastWeekStartUtc) GetWeekBoundsUtc(TimeProvider clock)
 		{
-			var today = DateTime.Today;
+			var local = clock.GetLocalNow();
+			var daysSinceMonday = ((int)local.DayOfWeek + 6) % 7;    
+			var thisMonday = local.Date.AddDays(-daysSinceMonday);
 
-			int diff = (7 + ((int)today.DayOfWeek - (int)DayOfWeek.Monday)) % 7;
+			DateTime ToUtc(DateTime localMidnight) =>
+				TimeZoneInfo.ConvertTimeToUtc(
+					DateTime.SpecifyKind(localMidnight, DateTimeKind.Unspecified), clock.LocalTimeZone);
 
-			var startOfTheWeek = today.AddDays(-diff);
-			var endOfTheWeek = startOfTheWeek.AddDays(6);
-
-			return (startOfTheWeek, endOfTheWeek);
-		}
-
-		private static (DateTime start, DateTime end) GetLastWeekRange()
-		{
-			var today = DateTime.Today;
-
-			int diff = (7 + ((int)today.DayOfWeek - (int)DayOfWeek.Monday)) % 7;
-
-			var startOfLastWeek = today.AddDays(-diff - 7);
-			var endOfLastWeek = startOfLastWeek.AddDays(6);
-
-			return (startOfLastWeek, endOfLastWeek);
+			return (ToUtc(thisMonday), ToUtc(thisMonday.AddDays(7)), ToUtc(thisMonday.AddDays(-7)));
 		}
 
 		private static string GetDifference(int thisWeek, int lastWeek)
