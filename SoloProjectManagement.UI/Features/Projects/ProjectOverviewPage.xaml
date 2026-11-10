@@ -103,7 +103,7 @@
 
             <ui:Card
                 Padding="0"
-                Margin="0,20,0,20"
+                Margin="0,20,0,0"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch">
                 <Grid Margin="0,20">
@@ -178,6 +178,36 @@
                 </Grid>
              
             </ui:Card>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,12">
+                <ui:TextBox 
+                    Width="340"
+                    PlaceholderText="Search tasks"
+                    Icon="{ui:SymbolIcon Search24}"
+                    ClearButtonEnabled="True"
+                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <ComboBox 
+                    Width="170" 
+                    Margin="10,0"
+                    ItemsSource="{Binding StatusFilters}"
+                    SelectedItem="{Binding SelectedStatusFilter}"
+                    DisplayMemberPath="Label"/>
+
+                <ComboBox 
+                    Width="170" 
+                    Margin="10,0"
+                    ItemsSource="{Binding PriorityFilters}"
+                    SelectedItem="{Binding SelectedPriorityFilter}"
+                    DisplayMemberPath="Label"/>
+
+                <ui:Button 
+                    Height="35"
+                    Content="Clear filters" 
+                    Appearance="Primary" 
+                    Command="{Binding ClearFiltersCommand}"/>
+            </StackPanel>
+
             <ui:Card Padding="0" VerticalAlignment="Top">
                 <Grid>
                     <Grid.RowDefinitions>

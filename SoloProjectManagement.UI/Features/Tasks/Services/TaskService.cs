@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
+using SoloProjectManagement.UI.Features.Tasks.Dto;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
+using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
 namespace SoloProjectManagement.UI.Features.Tasks.Services
 {
@@ -43,7 +45,7 @@ namespace SoloProjectManagement.UI.Features.Tasks.Services
 		}
 
 		public async Task<PagedResult<ProjectTaskDto>> GetAllAsync(
-			Guid? projectId,
+			TaskFilterRequest? request,
 			int pageNumber = 1,
 			int pageSize = 10,
 			CancellationToken ct = default)
@@ -52,10 +54,31 @@ namespace SoloProjectManagement.UI.Features.Tasks.Services
 
 			var query = db.ProjectTasks.AsNoTracking();	
 
-			if (projectId.HasValue)
+			if(request != null)
 			{
-				query = query.Where(t => t.ProjectId == projectId.Value);
+				if (request.ProjectId.HasValue && request.ProjectId is Guid id)
+				{
+					query = query.Where(t => t.ProjectId == id);
+				}
+
+				if (!string.IsNullOrEmpty(request.SearchQuery))
+				{
+					string search = request.SearchQuery.Trim();
+					query = query.Where(t => t.Name.Contains(search));
+				}
+
+				if(request.Status.HasValue && request.Status is TaskStatus status)
+				{
+					query = query.Where(t => t.Status == status);
+				}
+
+				if (request.Priority.HasValue && request.Priority is TaskPriority priority)
+				{
+					query = query.Where(t => t.Priority == priority);
+				}
 			}
+
+			var totalCount = await query.CountAsync(ct);
 
 			var tasks = await query
 				.Skip((pageNumber - 1) * pageSize)
@@ -70,8 +93,6 @@ namespace SoloProjectManagement.UI.Features.Tasks.Services
 					DueDate: t.DueDate
 					))
 				.ToListAsync(ct);
-
-			var totalCount = await query.CountAsync(ct);
 
 			return new PagedResult<ProjectTaskDto>(
 				Items: tasks,

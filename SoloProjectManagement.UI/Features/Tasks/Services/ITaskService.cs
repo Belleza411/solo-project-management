@@ -1,5 +1,6 @@
 ﻿using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
+using SoloProjectManagement.UI.Features.Tasks.Dto;
 using SoloProjectManagement.UI.Models;
 
 namespace SoloProjectManagement.UI.Features.Tasks.Services
@@ -7,7 +8,7 @@ namespace SoloProjectManagement.UI.Features.Tasks.Services
 	public interface ITaskService
 	{
 		Task<PagedResult<ProjectTaskDto>> GetAllAsync(
-			Guid? projectId,
+			TaskFilterRequest? request,
 			int pageNumber = 1,
 			int pageSize = 10,
 			CancellationToken ct = default);

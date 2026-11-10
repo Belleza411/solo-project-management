@@ -9,7 +9,6 @@ using SoloProjectManagement.UI.Features.Projects.ViewModels;
 using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing.Printing;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -24,7 +23,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 		ProjectContext context) : ObservableObject, INavigationAware
 	{
 		public ObservableCollection<ProjectDto> Projects { get; } = [];
-		private static readonly StatusFilterOption AllStatuses = new("All statuses", null);
+		private static readonly ProjectStatusFilterOption AllStatuses = new("All statuses", null);
 
 		[ObservableProperty]
 		[NotifyCanExecuteChangedFor(nameof(PreviousPageCommand))]
@@ -48,7 +47,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 		[NotifyPropertyChangedFor(nameof(HasActiveFilter))]
 		[NotifyPropertyChangedFor(nameof(EmptyMessage))]
 		[NotifyCanExecuteChangedFor(nameof(ClearFiltersCommand))]
-		private StatusFilterOption _selectedStatusFilter = AllStatuses;
+		private ProjectStatusFilterOption _selectedStatusFilter = AllStatuses;
 
 		private CancellationTokenSource? _searchCts;
 
@@ -94,8 +93,8 @@ namespace SoloProjectManagement.UI.Features.Projects
 			? "No projects yet. Create one to get started."
 			: $"No projects match \"{SearchText.Trim()}\".";
 
-		public IReadOnlyList<StatusFilterOption> StatusFilters { get; } =
-			[AllStatuses, .. Enum.GetValues<ProjectStatus>().Select(s => new StatusFilterOption(s.Humanize(), s))];
+		public IReadOnlyList<ProjectStatusFilterOption> StatusFilters { get; } =
+			[AllStatuses, .. Enum.GetValues<ProjectStatus>().Select(s => new ProjectStatusFilterOption(s.Humanize(), s))];
 		public Task OnNavigatedFromAsync() => Task.CompletedTask;
 
 		public Task OnNavigatedToAsync() => LoadAsync();
@@ -116,7 +115,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			catch (Exception ex)
 			{
 				ErrorMessage = ex.Message;
-			}			
+			}
 			finally
 			{
 				IsBusy = false;
@@ -157,7 +156,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 			var lastPage = Math.Max(1, (int)Math.Ceiling(result.TotalCount / (double)PageSize));
 
-			if(page > lastPage)
+			if (page > lastPage)
 			{
 				page = lastPage;
 				result = await projectService.GetAllAsync(
@@ -176,7 +175,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 		}
 
 		partial void OnSearchTextChanged(string value) => _ = RefreshAsync(TimeSpan.FromMilliseconds(300));
-		partial void OnSelectedStatusFilterChanged(StatusFilterOption value) => _ = RefreshAsync(TimeSpan.Zero);
+		partial void OnSelectedStatusFilterChanged(ProjectStatusFilterOption value) => _ = RefreshAsync(TimeSpan.Zero);
 
 		private async Task RefreshAsync(TimeSpan delay)
 		{

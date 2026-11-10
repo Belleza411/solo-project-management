@@ -5,6 +5,7 @@ using SoloProjectManagement.UI.Common;
 using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Projects.Services;
 using SoloProjectManagement.UI.Features.Tasks;
+using SoloProjectManagement.UI.Features.Tasks.Dto;
 using SoloProjectManagement.UI.Features.Tasks.Services;
 using SoloProjectManagement.UI.Features.Tasks.ViewModel;
 using SoloProjectManagement.UI.Models;
@@ -18,7 +19,7 @@ using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
 namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 {
-	public partial class ProjectOverviewViewModel(
+	public partial class ProjectOverviewViewModel( 
 		ProjectService projectService,
 		TaskService taskService,
 		IContentDialogService dialogService,
@@ -27,6 +28,9 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		[ObservableProperty]
 		private Project? _project;
 		public ObservableCollection<ProjectTaskDto> Tasks { get; } = [];
+
+		private static readonly TaskStatusFilterOption AllStatuses = new("All statuses", null);
+		private static readonly TaskPriorityFilterOption AllPriority = new("All priorities", null);
 
 		[ObservableProperty]
 		private int _remaining;
@@ -73,6 +77,29 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		[ObservableProperty]
 		private int _pageSize = 10;
 
+		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasActiveFilter))]
+		[NotifyPropertyChangedFor(nameof(EmptyMessage))]
+		[NotifyCanExecuteChangedFor(nameof(ClearFiltersCommand))]
+		private string _searchText = "";
+
+		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasActiveFilter))]
+		[NotifyPropertyChangedFor(nameof(EmptyMessage))]
+		[NotifyCanExecuteChangedFor(nameof(ClearFiltersCommand))]
+		private TaskStatusFilterOption _selectedStatusFilter = AllStatuses;
+
+		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasActiveFilter))]
+		[NotifyPropertyChangedFor(nameof(EmptyMessage))]
+		[NotifyCanExecuteChangedFor(nameof(ClearFiltersCommand))]
+		private TaskPriorityFilterOption _selectedPriorityFilter = AllPriority;
+
+		private CancellationTokenSource? _searchCts;
+
+		[ObservableProperty]
+		private bool _hasNoTasks;
+
 		public int TotalPages => Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
 		public bool HasPages => TotalPages > 1;
 		public bool CanGoPrevious => CurrentPage > 1 && !IsBusy;
@@ -89,7 +116,19 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			}
 		}
 
+		public bool HasActiveFilter => !string.IsNullOrWhiteSpace(SearchText) 
+			|| SelectedStatusFilter.Value is not null 
+			|| SelectedPriorityFilter.Value is not null;
+
+		public string EmptyMessage => HasActiveFilter
+			? "No tasks match your filters."
+			: "No tasks yet. Create one to get started.";
+
 		public IEnumerable<TaskStatus> Statuses { get; } = Enum.GetValues<TaskStatus>();
+		public IReadOnlyList<TaskStatusFilterOption> StatusFilters { get; } =
+			[AllStatuses, .. Enum.GetValues<TaskStatus>().Select(s => new TaskStatusFilterOption(s.Humanize(), s))];
+		public IReadOnlyList<TaskPriorityFilterOption> PriorityFilters { get; } =
+			[AllPriority, .. Enum.GetValues<TaskPriority>().Select(p => new TaskPriorityFilterOption(p.Humanize(), p))];
 
 		public Task OnNavigatedFromAsync() => Task.CompletedTask;
 		public Task OnNavigatedToAsync() => LoadAsync();
@@ -102,7 +141,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			NextPageCommand.NotifyCanExecuteChanged();
 		}
 
-		private async Task LoadAsync()
+		private async Task LoadAsync(CancellationToken ct = default)
 		{
 			IsBusy = true;
 			ErrorMessage = null;
@@ -128,7 +167,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 				Project = project;
 				ApplyProjectStats(project);
 
-				await LoadTaskAsync(project.Id, CurrentPage);
+				await LoadTaskAsync(project.Id, CurrentPage, ct);
 
 			}
 			catch (Exception ex)
@@ -141,20 +180,53 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			}
 		}
 
-	
-		private async Task LoadTaskAsync(Guid projectId, int page)
+		private async Task RefreshTasksAsync(CancellationToken ct = default)
+		{
+			if (Project is null)
+				return;
+
+			IsBusy = true;
+			ErrorMessage = null;
+
+			try
+			{
+				await LoadTaskAsync(Project.Id, 1, ct);
+			}
+			catch (OperationCanceledException)
+			{
+			}
+			catch (Exception ex)
+			{
+				Trace.TraceError(ex.ToString());
+				ErrorMessage = "Could not refresh tasks. Please try again.";
+			}
+			finally
+			{
+				IsBusy = false;
+			}
+		}
+
+		private async Task LoadTaskAsync(Guid projectId, int page, CancellationToken ct = default)
 		{
 			page = Math.Max(1, page);
 
-			var result = await taskService.GetAllAsync(projectId, page, PageSize);
+			var search = string.IsNullOrEmpty(SearchText) ? null : SearchText.Trim();
+			var status = SelectedStatusFilter.Value;
+			var priority = SelectedPriorityFilter.Value;
+
+			var request = new TaskFilterRequest(projectId, search, status, priority);
+
+			var result = await taskService.GetAllAsync(request, page, PageSize, ct);
 
 			var lastPage = Math.Max(1, (int)Math.Ceiling(result.TotalCount / (double)PageSize));
 
 			if(page > lastPage)
 			{
 				page = lastPage;
-				result = await taskService.GetAllAsync(projectId, page, PageSize);
+				result = await taskService.GetAllAsync(request, page, PageSize, ct);
 			}
+
+			ct.ThrowIfCancellationRequested();
 
 			Replace(Tasks, result.Items);
 
@@ -180,6 +252,26 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			finally
 			{
 				IsBusy = false;
+			}
+		}
+
+		partial void OnSearchTextChanged(string value) => _ = RefreshAsync(TimeSpan.FromMilliseconds(300));
+		partial void OnSelectedStatusFilterChanged(TaskStatusFilterOption value) => _ = RefreshAsync(TimeSpan.Zero);
+		partial void OnSelectedPriorityFilterChanged(TaskPriorityFilterOption value) => _ = RefreshAsync(TimeSpan.Zero);
+		private async Task RefreshAsync(TimeSpan delay)
+		{
+			_searchCts?.Cancel();
+			var cts = _searchCts = new CancellationTokenSource();
+
+			try
+			{
+				if (delay > TimeSpan.Zero)
+					await Task.Delay(delay, cts.Token);
+
+				await RefreshTasksAsync(cts.Token);
+			}
+			catch (OperationCanceledException)
+			{
 			}
 		}
 
@@ -349,7 +441,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 		private void ApplyProjectStats(Project project)
 		{
-			var total = TotalCount;
+			var total = project.Tasks.Count;
 			CompletedCount = project.Tasks.Count(t => t.Status == TaskStatus.Completed);
 			InProgressCount = project.Tasks.Count(t => t.Status == TaskStatus.InProgress);
 			TodoCount = project.Tasks.Count(t => t.Status == TaskStatus.Todo);
@@ -374,6 +466,14 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			DueDateText = project.DueDate?.ToString("MMM d") ?? "N/A";
 
 			UpdatedText = $"Updated {latest.Humanize()}";
+		}
+
+		[RelayCommand]
+		private void ClearFilters()
+		{
+			SearchText = "";
+			SelectedStatusFilter = AllStatuses;
+			SelectedPriorityFilter = AllPriority;
 		}
 
 		private static void Replace<T>(ObservableCollection<T> source, IEnumerable<T> items)
