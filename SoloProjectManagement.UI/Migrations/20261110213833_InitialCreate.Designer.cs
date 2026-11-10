@@ -11,8 +11,8 @@ using SoloProjectManagement.UI.Persistence;
 namespace SoloProjectManagement.UI.Migrations
 {
     [DbContext(typeof(ProjectDbContext))]
-    [Migration("20261025094516_AddedActivityLog")]
-    partial class AddedActivityLog
+    [Migration("20261110213833_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,47 +20,14 @@ namespace SoloProjectManagement.UI.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.13");
 
-            modelBuilder.Entity("SoloProjectManagement.UI.Models.ActivityLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ActionType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("EntityType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ProjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ProjectTaskId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("ProjectId");
-
-                    b.HasIndex("ProjectTaskId");
-
-                    b.ToTable("ActivityLogs");
-                });
-
             modelBuilder.Entity("SoloProjectManagement.UI.Models.Project", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -68,7 +35,7 @@ namespace SoloProjectManagement.UI.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("DueDate")
+                    b.Property<DateTime?>("DueDate")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
@@ -98,7 +65,7 @@ namespace SoloProjectManagement.UI.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("DueDate")
+                    b.Property<DateTime?>("DueDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -124,13 +91,6 @@ namespace SoloProjectManagement.UI.Migrations
                     b.ToTable("ProjectTasks");
                 });
 
-            modelBuilder.Entity("SoloProjectManagement.UI.Models.ActivityLog", b =>
-                {
-                    b.HasOne("SoloProjectManagement.UI.Models.ProjectTask", null)
-                        .WithMany("ActivityLogs")
-                        .HasForeignKey("ProjectTaskId");
-                });
-
             modelBuilder.Entity("SoloProjectManagement.UI.Models.ProjectTask", b =>
                 {
                     b.HasOne("SoloProjectManagement.UI.Models.Project", "Project")
@@ -145,11 +105,6 @@ namespace SoloProjectManagement.UI.Migrations
             modelBuilder.Entity("SoloProjectManagement.UI.Models.Project", b =>
                 {
                     b.Navigation("Tasks");
-                });
-
-            modelBuilder.Entity("SoloProjectManagement.UI.Models.ProjectTask", b =>
-                {
-                    b.Navigation("ActivityLogs");
                 });
 #pragma warning restore 612, 618
         }
