@@ -6,6 +6,7 @@ using SoloProjectManagement.UI.Features.Dashboard.Services;
 using SoloProjectManagement.UI.Features.Projects;
 using SoloProjectManagement.UI.Models;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions.Controls;
 
@@ -87,6 +88,7 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 			}
 			catch (Exception ex)
 			{
+				Debug.WriteLine($"Dashboard load failed: {ex}");
 				ErrorMessage = ex.Message;
 			}
 			finally

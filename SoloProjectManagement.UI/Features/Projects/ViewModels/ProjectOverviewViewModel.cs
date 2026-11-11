@@ -118,7 +118,6 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 				return $"{first}–{last} of {TotalCount}";
 			}
 		}
-
 		public bool HasActiveFilter => !string.IsNullOrWhiteSpace(SearchText) 
 			|| SelectedStatusFilter.Value is not null 
 			|| SelectedPriorityFilter.Value is not null;
@@ -175,6 +174,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			}
 			catch (Exception ex)
 			{
+				Debug.WriteLine($"Project overview load failed: {ex}");
 				ErrorMessage = ex.Message;
 			}
 			finally
@@ -195,12 +195,9 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			{
 				await LoadTaskAsync(Project.Id, 1, ct);
 			}
-			catch (OperationCanceledException)
-			{
-			}
 			catch (Exception ex)
 			{
-				Trace.TraceError(ex.ToString());
+				Debug.WriteLine($"Task refresh failed: {ex}");
 				ErrorMessage = "Could not refresh tasks. Please try again.";
 			}
 			finally
@@ -250,7 +247,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			}
 			catch (Exception ex)
 			{
-				Trace.TraceError(ex.ToString());
+				Debug.WriteLine($"Task page load failed: {ex}");
 				ErrorMessage = "Could not load that page. Please try again.";
 			}
 			finally
@@ -267,16 +264,10 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			_searchCts?.Cancel();
 			var cts = _searchCts = new CancellationTokenSource();
 
-			try
-			{
-				if (delay > TimeSpan.Zero)
-					await Task.Delay(delay, cts.Token);
+			if (delay > TimeSpan.Zero)
+				await Task.Delay(delay, cts.Token);
 
-				await RefreshTasksAsync(cts.Token);
-			}
-			catch (OperationCanceledException)
-			{
-			}
+			await RefreshTasksAsync(cts.Token);
 		}
 
 		[RelayCommand]
@@ -308,6 +299,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			}
 			catch (Exception ex)
 			{
+				Debug.WriteLine($"Task creation failed: {ex}");
 				ErrorMessage = ex.Message;
 			}
 		}
@@ -326,8 +318,21 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 			if (result != ContentDialogResult.Primary) return;
 
-			await taskService.DeleteAsync(task.Id, ct);
-			await LoadAsync(ct);
+			try
+			{
+				if (!await taskService.DeleteAsync(task.Id, ct))
+				{
+					ErrorMessage = "The task could not be found. Nothing was deleted.";
+					return;
+				}
+
+				await LoadAsync(ct);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Task deletion failed: {ex}");
+				ErrorMessage = "The task could not be deleted. Please try again.";
+			}
 		}
 
 		[RelayCommand] 
@@ -353,12 +358,17 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 					Priority: form.Priority,
 					DueDate: form.DueDate);
 
-				await taskService.UpdateAsync(task.Id, request, ct);
+				if (!await taskService.UpdateAsync(task.Id, request, ct))
+				{
+					ErrorMessage = "The task could not be found. Nothing was changed.";
+					return;
+				}
 
 				await LoadAsync(ct);
 			}
 			catch (Exception ex)
 			{
+				Debug.WriteLine($"Task update failed: {ex}");
 				ErrorMessage = ex.Message;
 			}
 		}
@@ -386,7 +396,11 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 					DueDate: form.DueDate
 				);
 
-				await projectService.UpdateAsync(request, ct);
+				if (!await projectService.UpdateAsync(request, ct))
+				{
+					ErrorMessage = "The project could not be found. Nothing was changed.";
+					return;
+				}
 
 				await LoadAsync(ct);
 			}
@@ -410,8 +424,21 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 			if (result != ContentDialogResult.Primary) return;
 
-			await projectService.DeleteAsync(project.Id, ct);
-			await LoadAsync(ct);
+			try
+			{
+				if (!await projectService.DeleteAsync(project.Id, ct))
+				{
+					ErrorMessage = "The project could not be found. Nothing was deleted.";
+					return;
+				}
+
+				await LoadAsync(ct);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Project deletion failed: {ex}");
+				ErrorMessage = "The project could not be deleted. Please try again.";
+			}
 		}
 
 		[RelayCommand]
@@ -430,12 +457,17 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 					Priority: change.Task.Priority,
 					DueDate: change.Task.DueDate);
 
-				await taskService.UpdateAsync(change.Task.Id, request, ct);
+				if (!await taskService.UpdateAsync(change.Task.Id, request, ct))
+				{
+					ErrorMessage = "The task could not be found. Nothing was changed.";
+					return;
+				}
 
 				await LoadAsync(ct);
 			}
 			catch (Exception ex)
 			{
+				Debug.WriteLine($"Task status change failed: {ex}");
 				ErrorMessage = ex.Message;
 			}
 		}

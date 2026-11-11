@@ -114,6 +114,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			}
 			catch (Exception ex)
 			{
+				Debug.WriteLine($"Project list load failed: {ex}");
 				ErrorMessage = ex.Message;
 			}
 			finally
@@ -132,7 +133,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			}
 			catch (Exception ex)
 			{
-				Trace.TraceError(ex.ToString());
+				Debug.WriteLine($"Project page load failed: {ex}");
 				ErrorMessage = "Could not load that page. Please try again.";
 			}
 			finally
@@ -182,16 +183,10 @@ namespace SoloProjectManagement.UI.Features.Projects
 			_searchCts?.Cancel();
 			var cts = _searchCts = new CancellationTokenSource();
 
-			try
-			{
-				if (delay > TimeSpan.Zero)
-					await Task.Delay(delay, cts.Token);
+			if (delay > TimeSpan.Zero)
+				await Task.Delay(delay, cts.Token);
 
-				await LoadAsync(cts.Token);
-			}
-			catch (OperationCanceledException)
-			{
-			}
+			await LoadAsync(cts.Token);
 		}
 
 
@@ -246,7 +241,12 @@ namespace SoloProjectManagement.UI.Features.Projects
 					Status: form.Status,
 					DueDate: form.DueDate
 				);
-				await projectService.UpdateAsync(request, ct);
+
+				if (!await projectService.UpdateAsync(request, ct))
+				{
+					ErrorMessage = "The project could not be found. Nothing was changed.";
+					return;
+				}
 
 				await LoadAsync(ct);
 			}
@@ -271,8 +271,21 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 			if (result != ContentDialogResult.Primary) return;
 
-			await projectService.DeleteAsync(project.Id, ct);
-			await LoadAsync(ct);
+			try
+			{
+				if (!await projectService.DeleteAsync(project.Id, ct))
+				{
+					ErrorMessage = "The project could not be found. Nothing was deleted.";
+					return;
+				}
+
+				await LoadAsync(ct);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Project deletion failed: {ex}");
+				ErrorMessage = "The project could not be deleted. Please try again.";
+			}
 		}
 
 		[RelayCommand]
