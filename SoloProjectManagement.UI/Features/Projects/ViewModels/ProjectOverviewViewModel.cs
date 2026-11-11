@@ -98,7 +98,10 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 		private CancellationTokenSource? _searchCts;
 
 		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasTasks))]
 		private bool _hasNoTasks;
+
+		public bool HasTasks => !HasNoTasks;
 
 		public int TotalPages => Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
 		public bool HasPages => TotalPages > 1;
@@ -231,7 +234,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			Replace(Tasks, result.Items);
 
 			TotalCount = result.TotalCount;
-			HasNoTasks = result.TotalCount > 0;
+			HasNoTasks = result.TotalCount == 0;
 			CurrentPage = page;
 		}
 
