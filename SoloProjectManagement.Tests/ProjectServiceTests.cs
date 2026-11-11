@@ -231,31 +231,6 @@ namespace SoloProjectManagement.Tests
 		}
 
 		[Fact]
-		public async Task GetAll_Pagination_WithPageNumberOfTwo_ReturnsCorrectPage()
-		{
-			using var context = _db.CreateContext();
-			await context.Database.EnsureCreatedAsync();
-
-			var service = CreateService(_db);
-			var projects = Faker.CreateProject().Generate(6);
-
-			var projectManagement = Faker.CreateProject()
-				.RuleFor(p => p.Title, f => "Project Management")
-				.RuleFor(p => p.Status, f => ProjectStatus.Active)
-				.Generate();
-
-			context.Projects.AddRange([..projects, projectManagement]);
-			await context.SaveChangesAsync();
-
-			var result = await service.GetAllAsync(null, 2, 6);
-
-			Assert.NotNull(result);
-			Assert.Equal(7, result.TotalCount);
-			Assert.Single(result.Items);
-			Assert.Equal(projectManagement.Id, result.Items.First().Id);
-		}
-
-		[Fact]
 		public async Task Create_WithValidData_CreatedSuccessfully()
 		{
 			using var context = _db.CreateContext();

@@ -11,7 +11,7 @@ using SoloProjectManagement.UI.Persistence;
 namespace SoloProjectManagement.UI.Migrations
 {
     [DbContext(typeof(ProjectDbContext))]
-    [Migration("20261110213833_InitialCreate")]
+    [Migration("20261111044035_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,6 +33,7 @@ namespace SoloProjectManagement.UI.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("DueDate")
@@ -43,6 +44,7 @@ namespace SoloProjectManagement.UI.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -63,6 +65,7 @@ namespace SoloProjectManagement.UI.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("DueDate")
@@ -70,6 +73,7 @@ namespace SoloProjectManagement.UI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Priority")
