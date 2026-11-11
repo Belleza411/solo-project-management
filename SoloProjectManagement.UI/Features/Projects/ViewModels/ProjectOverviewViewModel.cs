@@ -231,7 +231,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			Replace(Tasks, result.Items);
 
 			TotalCount = result.TotalCount;
-			HasNoTasks = result.TotalCount == 0;
+			HasNoTasks = result.TotalCount > 0;
 			CurrentPage = page;
 		}
 
