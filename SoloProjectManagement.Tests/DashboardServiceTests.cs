@@ -208,7 +208,7 @@ namespace SoloProjectManagement.Tests
 
 			var projectFive = Faker.CreateProject()
 				.RuleFor(p => p.Status, f => ProjectStatus.Active)
-				.RuleFor(p => p.CreatedAt, f => new DateTime(2026, 11, 9, 12, 0, 0, DateTimeKind.Utc))
+				.RuleFor(p => p.CreatedAt, f => new DateTime(2026, 11, 9, 13, 0, 0, DateTimeKind.Utc)) // Changed from 12 to 13
 				.RuleFor(p => p.UpdatedAt, f => null)
 				.Generate();
 
@@ -282,7 +282,6 @@ namespace SoloProjectManagement.Tests
 			project.Tasks = new()
 			{
 				Faker.CreateTask(project.Id)
-					.RuleFor(t => t.Id, f => Guid.Parse("9BA9D4A0-8380-4777-A4C2-264E09483507"))
 					.RuleFor(t => t.Name, f => "Create Models")
 					.RuleFor(t => t.Status, f => TaskStatus.InProgress)
 					.RuleFor(t => t.Priority, f => TaskPriority.Medium)
@@ -290,7 +289,6 @@ namespace SoloProjectManagement.Tests
 					.Generate(),
 
 				Faker.CreateTask(project.Id)
-					.RuleFor(t => t.Id, f => Guid.Parse("74A33C4B-3A29-4F44-92B8-149C152CAF7B"))
 					.RuleFor(t => t.Name, f => "Create Persistence")
 					.RuleFor(t => t.Status, f => TaskStatus.Todo)
 					.RuleFor(t => t.Priority, f => TaskPriority.High)
@@ -298,7 +296,6 @@ namespace SoloProjectManagement.Tests
 					.Generate(),
 
 				Faker.CreateTask(project.Id)
-					.RuleFor(t => t.Id, f => Guid.Parse("780AD313-7293-4AC5-9D83-0D40EC3BFC46"))
 					.RuleFor(t => t.Name, f => "Design Database Schema")
 					.RuleFor(t => t.Status, f => TaskStatus.Todo)
 					.RuleFor(t => t.Priority, f => TaskPriority.High)
@@ -306,7 +303,6 @@ namespace SoloProjectManagement.Tests
 					.Generate(),
 
 				Faker.CreateTask(project.Id)
-					.RuleFor(t => t.Id, f => Guid.Parse("052FCED1-F253-4C3B-8398-855BD3B079F3"))
 					.RuleFor(t => t.Name, f => "Create View Models")
 					.RuleFor(t => t.Status, f => TaskStatus.InProgress)
 					.RuleFor(t => t.Priority, f => TaskPriority.Low)
@@ -314,7 +310,6 @@ namespace SoloProjectManagement.Tests
 					.Generate(),
 
 				Faker.CreateTask(project.Id)
-					.RuleFor(t => t.Id, f => Guid.Parse("058F57DD-6899-4992-BC8F-EE41026316DD"))
 					.RuleFor(t => t.Name, f => "Design Architecture")
 					.RuleFor(t => t.Status, f => TaskStatus.Todo)
 					.RuleFor(t => t.Priority, f => TaskPriority.Medium)
@@ -322,7 +317,6 @@ namespace SoloProjectManagement.Tests
 					.Generate(),
 
 				Faker.CreateTask(project.Id)
-					.RuleFor(t => t.Id, f => Guid.Parse("FCEA8568-E7D6-4A7F-83DA-8920ABCD34AE"))
 					.RuleFor(t => t.Name, f => "Add Navigation")
 					.RuleFor(t => t.Status, f => TaskStatus.Todo)
 					.RuleFor(t => t.Priority, f => TaskPriority.Low)

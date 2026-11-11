@@ -63,7 +63,6 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 				.Include(p => p.Tasks)
 				.Where(p => p.Status != ProjectStatus.Archived)
 				.OrderByDescending(p => p.UpdatedAt ?? p.CreatedAt)
-				.ThenByDescending(p => p.Id)
 				.Take(3)
 				.ToListAsync(ct);
 
@@ -81,7 +80,6 @@ namespace SoloProjectManagement.UI.Features.Dashboard.Services
 					? 0
 					: t.Priority == TaskPriority.Medium ? 1 : 2)
 			   .ThenBy(t => t.DueDate)
-			   .ThenBy(t => t.Id)
 			   .Take(5)
 			   .Select(t => new RecentTaskDto(
 				   Name: t.Name,
