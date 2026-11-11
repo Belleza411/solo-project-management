@@ -16,7 +16,7 @@ namespace SoloProjectManagement.Tests
 		{
 			_db = new SqliteTestDb();
 		}
-
+		 
 		[Fact]
 		public async Task GetOverview_With_EmptyDatabase_ReturnsAllZero()
 		{
