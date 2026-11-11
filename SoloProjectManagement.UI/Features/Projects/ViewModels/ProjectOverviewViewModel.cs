@@ -231,6 +231,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			Replace(Tasks, result.Items);
 
 			TotalCount = result.TotalCount;
+			HasNoTasks = result.TotalCount == 0;
 			CurrentPage = page;
 		}
 
@@ -300,7 +301,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 				await taskService.CreateAsync(request, ct);
 
-				await LoadAsync();
+				await LoadAsync(ct);
 			}
 			catch (Exception ex)
 			{
@@ -323,7 +324,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			if (result != ContentDialogResult.Primary) return;
 
 			await taskService.DeleteAsync(task.Id, ct);
-			await LoadAsync();
+			await LoadAsync(ct);
 		}
 
 		[RelayCommand] 
@@ -351,7 +352,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 				await taskService.UpdateAsync(task.Id, request, ct);
 
-				await LoadAsync();
+				await LoadAsync(ct);
 			}
 			catch (Exception ex)
 			{
@@ -381,7 +382,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 					form.DueDate,
 					form.Status, ct);
 
-				await LoadAsync();
+				await LoadAsync(ct);
 			}
 			catch (Exception ex)
 			{
@@ -404,7 +405,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 			if (result != ContentDialogResult.Primary) return;
 
 			await projectService.DeleteAsync(project.Id, ct);
-			await LoadAsync();
+			await LoadAsync(ct);
 		}
 
 		[RelayCommand]
@@ -425,7 +426,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 				await taskService.UpdateAsync(change.Task.Id, request, ct);
 
-				await LoadAsync();
+				await LoadAsync(ct);
 			}
 			catch (Exception ex)
 			{

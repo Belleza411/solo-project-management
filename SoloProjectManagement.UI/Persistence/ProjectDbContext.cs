@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoloProjectManagement.UI.Models;
-using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
 namespace SoloProjectManagement.UI.Persistence
 {
@@ -39,8 +38,6 @@ namespace SoloProjectManagement.UI.Persistence
 					.HasForeignKey(t => t.ProjectId)
 					.OnDelete(DeleteBehavior.Cascade);
 			});
-
-			ProjectSeeder.Seed(modelBuilder);
 		}
 	}
 }
