@@ -155,7 +155,7 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 			try
 			{
-				var project = await projectService.GetByIdAsync(id);
+				var project = await projectService.GetByIdAsync(id, ct);
 
 				if(project is null)
 				{
@@ -374,13 +374,16 @@ namespace SoloProjectManagement.UI.Features.Projects.ViewModels
 
 			try
 			{
-				await projectService.UpdateAsync(
-					project.Id,
-					form.Title,
-					form.Description,
-					form.Category,
-					form.DueDate,
-					form.Status, ct);
+				var request = new UpdateProjectRequest(
+					Id: project.Id,
+					Title: form.Title,
+					Description: form.Description,
+					Category: form.Category,
+					Status: form.Status,
+					DueDate: form.DueDate
+				);
+
+				await projectService.UpdateAsync(request, ct);
 
 				await LoadAsync(ct);
 			}

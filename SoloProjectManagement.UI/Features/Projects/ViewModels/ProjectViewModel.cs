@@ -208,14 +208,16 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 			try
 			{
-				await projectService.CreateAsync(
-					form.Title,
-					form.Description,
-					form.Category,
-					form.Status,
-					form.DueDate, ct);
+				var request = new CreateProjectRequest(
+					Title: form.Title,
+					Description: form.Description,
+					Category: form.Category,
+					Status: form.Status,
+					DueDate: form.DueDate);
 
-				await LoadAsync();
+				await projectService.CreateAsync(request, ct);
+
+				await LoadAsync(ct);
 			}
 			catch (Exception ex)
 			{
@@ -236,15 +238,17 @@ namespace SoloProjectManagement.UI.Features.Projects
 
 			try
 			{
-				await projectService.UpdateAsync(
-					project.Id,
-					form.Title,
-					form.Description,
-					form.Category,
-					form.DueDate,
-					form.Status, ct);
+				var request = new UpdateProjectRequest(
+					Id: project.Id,
+					Title: form.Title,
+					Description: form.Description,
+					Category: form.Category,
+					Status: form.Status,
+					DueDate: form.DueDate
+				);
+				await projectService.UpdateAsync(request, ct);
 
-				await LoadAsync();
+				await LoadAsync(ct);
 			}
 			catch (Exception ex)
 			{
@@ -268,7 +272,7 @@ namespace SoloProjectManagement.UI.Features.Projects
 			if (result != ContentDialogResult.Primary) return;
 
 			await projectService.DeleteAsync(project.Id, ct);
-			await LoadAsync();
+			await LoadAsync(ct);
 		}
 
 		[RelayCommand]

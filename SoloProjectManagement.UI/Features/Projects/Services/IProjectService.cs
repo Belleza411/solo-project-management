@@ -14,19 +14,10 @@ namespace SoloProjectManagement.UI.Features.Projects.Services
 			CancellationToken ct = default);
 		Task<Project?> GetByIdAsync(Guid id, CancellationToken ct = default);
 		Task<Project> CreateAsync(
-			string title,
-			string? description,
-			ProjectCategory category,
-			ProjectStatus status,
-			DateTime? dueDate,
+			CreateProjectRequest request,
 			CancellationToken ct = default);
 		Task<bool> UpdateAsync(
-			Guid id,
-			string title,
-			string? description,
-			ProjectCategory category,
-			DateTime? dueDate,
-			ProjectStatus status,
+			UpdateProjectRequest request,
 			CancellationToken ct = default);
 		Task<bool> DeleteAsync(Guid Id, CancellationToken ct = default);
 	}

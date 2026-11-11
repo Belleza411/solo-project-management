@@ -4,29 +4,24 @@ using SoloProjectManagement.UI.Dtos;
 using SoloProjectManagement.UI.Features.Projects.Dtos;
 using SoloProjectManagement.UI.Models;
 using SoloProjectManagement.UI.Persistence;
-using TaskStatus = SoloProjectManagement.UI.Models.TaskStatus;
 
 namespace SoloProjectManagement.UI.Features.Projects.Services
 {
 	public class ProjectService(string connectionString) : IProjectService
 	{
 		public async Task<Project> CreateAsync(
-			string title,
-			string? description,
-			ProjectCategory category,
-			ProjectStatus status,
-			DateTime? dueDate,
+			CreateProjectRequest request,
 			CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
 			var project = new Project
 			{
-				Category = category,
-				Title = title,
-				Description = description,
-				Status = status,
-				DueDate = dueDate
+				Category = request.Category,
+				Title = request.Title,
+				Description = request.Description,
+				Status = request.Status,
+				DueDate = request.DueDate
 			};
 
 			db.Projects.Add(project);
@@ -75,7 +70,7 @@ namespace SoloProjectManagement.UI.Features.Projects.Services
 
 			var projects = await query
 				.Include(p => p.Tasks)
-				.OrderBy(p => p.Title)
+				.OrderBy(p => p.Id)
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync(ct);
@@ -97,25 +92,20 @@ namespace SoloProjectManagement.UI.Features.Projects.Services
 		}
 
 		public async Task<bool> UpdateAsync(
-			Guid id,
-			string title,
-			string? description,
-			ProjectCategory category,
-			DateTime? dueDate,
-			ProjectStatus status,
+			UpdateProjectRequest request,
 			CancellationToken ct = default)
 		{
 			using var db = new ProjectDbContext(connectionString);
 
-			var project = await GetByIdAsync(id, ct);
+			var project = await GetByIdAsync(request.Id, ct);
 
 			if (project is null) return false;
 
-			project.Title = title;
-			project.Description = description;
-			project.Category = category;
-			project.Status = status;
-			project.DueDate = dueDate;
+			project.Title = request.Title;
+			project.Description = request.Description;
+			project.Category = request.Category;
+			project.Status = request.Status;
+			project.DueDate = request.DueDate;
 			project.UpdatedAt = DateTime.UtcNow;
 
 			db.Projects.Update(project);
