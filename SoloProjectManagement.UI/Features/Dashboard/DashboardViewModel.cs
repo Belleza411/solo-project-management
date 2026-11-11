@@ -42,6 +42,11 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 		public string TasksFooter => $"Showing {RecentTasks.Count} of {TotalTasksCount} tasks";
 
 		[ObservableProperty]
+		private bool _hasTasks;
+		[ObservableProperty]
+		private bool _hasProjects;
+
+		[ObservableProperty]
 		private bool _isBusy;
 
 		[ObservableProperty]
@@ -73,6 +78,9 @@ namespace SoloProjectManagement.UI.Features.Dashboard
 				TotalTasksCount = recentTasks.Result.Count;
 
 				OnPropertyChanged(nameof(TasksFooter));
+
+				HasProjects = recentProjects.Result.Count == 0;
+				HasTasks = recentTasks.Result.Count > 0;
 			}
 			catch (Exception ex)
 			{

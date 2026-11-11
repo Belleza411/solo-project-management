@@ -54,7 +54,7 @@ namespace SoloProjectManagement.Tests
 			var result = await service.GetAllAsync(null);
 
 			Assert.NotNull(result);
-			Assert.Single(result.Items)
+			Assert.Single(result.Items);
 
 			var dto = result.Items.First();
 
